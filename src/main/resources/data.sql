@@ -34,7 +34,7 @@ CREATE TABLE `WORKSHEET` (
 ) ENGINE=InnoDB;
 
 -- 외래키를 참조하는 테이블들을 생성
-CREATE TABLE `Feedback` (
+CREATE TABLE `FEEDBACK` (
                             `ID`	INT	NOT NULL,
                             `user_id`	VARCHAR(50)	NOT NULL,
                             `date`	VARCHAR(20)	NOT NULL,
