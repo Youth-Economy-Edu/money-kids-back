@@ -11,9 +11,6 @@ public class Concept {
     @Column(name = "concept_id", nullable = false)
     private long concept_id; // 개념 고유 식별 아이디
 
-    @Column(name = "difficulty_level")
-    private int difficultyLevel;
-
     @Column(name = "concept_title", nullable = false)
     private String concept_title; // 개념 제목 ex) 수요
 
