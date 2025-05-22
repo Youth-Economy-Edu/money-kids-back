@@ -1,4 +1,7 @@
 package com.moneykidsback.repository;
 
-public class StockRepository {
+import com.moneykidsback.model.entity.Stock;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface StockRepository extends JpaRepository<Stock, String> {
 }
