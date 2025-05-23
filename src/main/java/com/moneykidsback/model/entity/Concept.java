@@ -12,7 +12,7 @@ public class Concept {
     private long concept_id; // 개념 고유 식별 아이디
 
     @Column(name = "difficulty_level")
-    private int difficultyLevel;
+    private int difficultyLevel; // 경제 개념 난이도 (1~5)
 
     @Column(name = "concept_title", nullable = false)
     private String concept_title; // 개념 제목 ex) 수요
