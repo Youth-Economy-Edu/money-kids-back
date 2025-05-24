@@ -21,9 +21,23 @@ public class RankingService {
     @Autowired
     private StockRepository stockRepository;
 
+    //주식 순위
     public List<Stock> getStocksOrderedByPriceDesc() {
         try {
             return stockRepository.findAllByOrderByPriceDesc();
+        } catch (DataAccessException e) {
+            logger.log(Level.SEVERE, "RankingService 의 DB 접근 에러 발생", e);
+            return Collections.emptyList(); // 빈 리스트 반환
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "DB 예외 발생", e);
+            return Collections.emptyList(); // 빈 리스트 반환
+        }
+    }
+
+    //카테고리별 순위
+    public List<Stock> findAllByCategoryOrderByPriceDesc(String category)    {
+        try{
+            return stockRepository.findAllByCategoryOrderByPriceDesc(category);
         } catch (DataAccessException e) {
             logger.log(Level.SEVERE, "RankingService 의 DB 접근 에러 발생", e);
             return Collections.emptyList(); // 빈 리스트 반환
