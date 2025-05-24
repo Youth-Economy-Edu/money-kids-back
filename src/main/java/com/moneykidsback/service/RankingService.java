@@ -1,17 +1,35 @@
 package com.moneykidsback.service;
 
-import com.moneykidsback.dto.request.StockInfoDto;
-import org.springframework.messaging.handler.annotation.MessageMapping;
+import com.moneykidsback.model.Stock;
+import com.moneykidsback.repository.StockRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @Service
 public class RankingService {
 
-    @MessageMapping("/stock-info") //클라이언트(주가변동로직) 가 보낸 데이터 수신
-    public void receiveStockMessage(StockInfoDto stockInfo) {
-        // 전달받은 데이터 처리 로직 작성
-        System.out.println("받은 데이터: " + stockInfo.getCode() + ", " + stockInfo.getName() + ", " + stockInfo.getPrice() + ", " + stockInfo.getCategory());
-        // 이후 필요한 비즈니스 로직 수행
+    private static final Logger logger = Logger.getLogger(RankingService.class.getName());
+
+
+    @Autowired
+    private StockRepository stockRepository;
+
+    public List<Stock> getStocksOrderedByPriceDesc() {
+        try {
+            return stockRepository.findAllByOrderByPriceDesc();
+        } catch (DataAccessException e) {
+            logger.log(Level.SEVERE, "RankingService 의 DB 접근 에러 발생", e);
+            return Collections.emptyList(); // 빈 리스트 반환
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "DB 예외 발생", e);
+            return Collections.emptyList(); // 빈 리스트 반환
+        }
     }
 }
