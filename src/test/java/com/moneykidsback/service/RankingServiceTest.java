@@ -5,13 +5,13 @@ import com.moneykidsback.repository.StockRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 
-//@SpringBootTest
-@DataJpaTest
+@SpringBootTest
+//@DataJpaTest
 @TestPropertySource(locations = "classpath:application-test.properties")
 //@ActiveProfiles("test")
 public class RankingServiceTest {
@@ -20,7 +20,7 @@ public class RankingServiceTest {
     private StockRepository stockRepository;
 
     @Test
-    @DisplayName("주식순위 쿼리")
+    @DisplayName("주식순위 검색")
     public void stockRankedTest() {
         // 더미 데이터 저장 (테스트 환경에서만)
         for (int i = 1; i <= 10; i++) {
@@ -39,6 +39,34 @@ public class RankingServiceTest {
         for (Stock stock : rankedStocks) {
             System.out.println(stock.getCode() + " | " + stock.getName() + " | " + stock.getPrice() + " | " + stock.getCategory());
         }
+    }
+
+    @Test
+    @DisplayName("카테고리별 순위 검색")
+    public void stockCategoryTest() {
+        for (int i = 1; i <= 5; i++) {
+            Stock stock = new Stock();
+            stock.setCode("CODE 1-" + i);
+            stock.setName("테스트 스톡 1-" + i);
+            stock.setPrice(1000 * i);
+            stock.setCategory("Tech");
+            stockRepository.save(stock);
+        }
+        for (int i = 1; i <= 5; i++) {
+            Stock stock = new Stock();
+            stock.setCode("CODE 2-" + i);
+            stock.setName("테스트 스톡 1-" + i);
+            stock.setPrice(1000 * i);
+            stock.setCategory("Defense");
+            stockRepository.save(stock);
+        }
+
+        //Defense 카테고리 검색
+        List<Stock> categoryRankedStocks = stockRepository.findAllByCategoryOrderByPriceDesc("Defense");
+        for (Stock stock : categoryRankedStocks) {
+            System.out.println(stock.getCode() + " | " + stock.getName() + " | " + stock.getPrice() + " | " + stock.getCategory());
+        }
+
     }
 }
 
