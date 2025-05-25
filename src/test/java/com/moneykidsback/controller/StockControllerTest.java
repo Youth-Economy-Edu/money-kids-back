@@ -71,12 +71,26 @@ class StockControllerTest {
     @DisplayName("카테고리별 주식 순위 조회 - 데이터 없음")
     void getStockRankingByCategory_NoContent() throws Exception {
         // 해당 카테고리에 대한 데이터 없을때 예외처리 (빈 리스트 반환)
-        when(rankingService.findAllByCategoryOrderByPriceDesc("NonExistentCategory")).thenReturn(Collections.emptyList());
+        when(rankingService.findAllByCategoryOrderByPriceDesc("없는 카테고리")).thenReturn(Collections.emptyList());
 
         // GET요청
         // 존재하지 않는 카테고리에 대한 204응답 검증
-        mockMvc.perform(get("/api/stocks/rankings")
+        mockMvc.perform(get("/api/stocks/ranking")
                         .param("standard", "NonExistentCategory"))
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    @DisplayName("변동률 기준 순위 조회 - 성공")
+    void getStockRnkingByChangerate_Success() throws Exception {
+        // 변동률 데이터 호출 실패시 예외처리 (재호출)
+        when(rankingService.getStocksOrderedByChangeRateDesc()).thenReturn(rankingService.getStocksOrderedByChangeRateDesc());
+
+        // GET요청
+        // 존재하지 않는 카테고리에 대한 204응답 검증
+        mockMvc.perform(get("/api/stocks/ranking")
+                        .param("standard", "NonExistentCategory"))
+                .andExpect(status().isNoContent());
+    }
+
 }
