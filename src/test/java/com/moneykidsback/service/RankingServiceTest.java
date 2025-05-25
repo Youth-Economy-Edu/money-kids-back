@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest
@@ -29,6 +30,7 @@ public class RankingServiceTest {
             stock.setName("테스트 스톡" + i);
             stock.setPrice(1000 * i);
             stock.setCategory("Tech");
+            stock.setUpdatedAt(LocalDateTime.now());
             stockRepository.save(stock);
         }
 
@@ -50,6 +52,7 @@ public class RankingServiceTest {
             stock.setName("테스트 스톡 1-" + i);
             stock.setPrice(1000 * i);
             stock.setCategory("Tech");
+            stock.setUpdatedAt(LocalDateTime.now());
             stockRepository.save(stock);
         }
         for (int i = 1; i <= 5; i++) {
@@ -58,13 +61,14 @@ public class RankingServiceTest {
             stock.setName("테스트 스톡 1-" + i);
             stock.setPrice(1000 * i);
             stock.setCategory("Defense");
+            stock.setUpdatedAt(LocalDateTime.now());
             stockRepository.save(stock);
         }
 
         //Defense 카테고리 검색
         List<Stock> categoryRankedStocks = stockRepository.findAllByCategoryOrderByPriceDesc("Defense");
         for (Stock stock : categoryRankedStocks) {
-            System.out.println(stock.getCode() + " | " + stock.getName() + " | " + stock.getPrice() + " | " + stock.getCategory());
+            System.out.println(stock.getCode() + " | " + stock.getName() + " | " + stock.getPrice() + " | " + stock.getCategory()  + " | " + stock.getUpdatedAt());
         }
 
     }
