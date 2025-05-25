@@ -12,8 +12,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Stock {
-    // Q1: 이거 객체는 그냥 Model안에 바로 집어넣는 건가?
-    // Q2: 주식이 새로 생성되거나 삭제되는 일이 있을 것인가? 현실이라면 있겠지만 이건 가상이라서...
+    // Q1: 주식이 새로 생성되거나 삭제되는 일이 있을 것인가?
+    // A1: 없음. 종목 테이블은 fixed라고 생각할 것.
     @Id
     @Column(name = "code")
     @GeneratedValue(strategy = GenerationType.AUTO)
