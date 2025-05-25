@@ -19,22 +19,33 @@ public class StockController {
 
     //전체 순위 조회
     @GetMapping("/stocks/ranking")
-    public List<Stock> getStockRanking() {
-        return rankingService.getStocksOrderedByPriceDesc();
-    }
-
-    //카테고리별 순위 조회
-    @GetMapping("/stocks/category")
-    public ResponseEntity<List<Stock>> getStockRankingByCategory(@RequestParam(required = false) String standard) {
+    public ResponseEntity<List<Stock>> getStockRanking(@RequestParam(required = true) String standard) {
         List<Stock> stocks;
-        if (standard == null || standard.isEmpty()) { //파라미터가 비어있으면 전체 순위 조회
-            stocks = rankingService.getStocksOrderedByPriceDesc();
+        if(standard.equals("price")) {
+            stocks = rankingService.getStocksOrderedByPriceDesc(); // 주가 기준 순위 조회
         } else {
-            stocks = rankingService.findAllByCategoryOrderByPriceDesc(standard);
+            stocks = rankingService.getStocksOrderedByChangeRateDesc();  //todo: 변동률 기준 순위 메소드(논의 필요)
         }
         if (stocks.isEmpty()) {
             return ResponseEntity.noContent().build(); //내용이 없음(204)
         }
-        return ResponseEntity.ok(stocks); //정상(200)
+        return ResponseEntity.ok(stocks); //정상 반환(200)
+    }
+
+    //종목별 순위 조회
+    @GetMapping("/stocks/category")
+    public ResponseEntity<List<Stock>> getStockRankingByCategory(@RequestParam(required = true) String category) {
+        List<Stock> stocks;
+        if (category.equals("IT")){
+            stocks = rankingService.findAllByCategoryOrderByPriceDesc(category);
+        } else if (category.equals("Medical")){
+            stocks = rankingService.findAllByCategoryOrderByPriceDesc(category);
+        } else {
+            stocks = rankingService.getStocksOrderedByPriceDesc(); //할당된 값 없으면 주가기준 순위 조회
+        }
+        if (stocks.isEmpty()) {
+            return ResponseEntity.noContent().build(); //내용이 없음(204)
+        }
+        return ResponseEntity.ok(stocks); //정상 반환(200)
     }
 }
