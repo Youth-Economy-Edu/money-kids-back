@@ -23,7 +23,7 @@ public class AnalysisPerformService {
     private final TendencyAnalysisRepository tendencyAnalysisRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public TendencyAnalysis performAnalysis(Long userId, List<ActivityLogDTO> activityLogs) {
+    public TendencyAnalysis performAnalysis(String userId, List<ActivityLogDTO> activityLogs) {
         // 1. 프롬프트 생성
         String prompt = buildPromptFromLogs(activityLogs);
 

@@ -1,9 +1,6 @@
 package com.moneykidsback.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -13,20 +10,46 @@ import java.time.LocalDateTime;
 // TODO: 데이터베이스 설계에 따라 필요한 필드 추가 논의!
 
 @Entity
+@Table(name = "TENDENCY_ANALYSIS")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class TendencyAnalysis {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 고유 ID
-    private Long userId; // 사용자 ID
-    private String type; // 분석 유형 (예: 안정형, 공격형)
-    private double score; // 분석 점수
-    private String feedback; // 분석 피드백
-    private LocalDateTime createdAt; // 생성 시각
+    @Column(name = "ID")
+    private Integer id;
 
+    @Column(name = "user_id", nullable = false)
+    private String userId;
+
+    @Column(name = "aggressive_score", nullable = false)
+    private double aggressiveScore;
+
+    @Column(name = "active_score", nullable = false)
+    private double activeScore;
+
+    @Column(name = "neutral_score", nullable = false)
+    private double neutralScore;
+
+    @Column(name = "stable_seeking_score", nullable = false)
+    private double stableSeekingScore;
+
+    @Column(name = "stable_score", nullable = false)
+    private double stableScore;
+
+    @Column(name = "type", nullable = false)
+    private String type;
+
+    @Column(name = "score", nullable = false)
+    private double score;
+
+    @Column(name = "feedback")
+    private String feedback;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }

@@ -31,7 +31,7 @@ public class AnalysisPerformController {
 
         try {
             TendencyAnalysis result = analysisPerformService.performAnalysis(
-                    requestDTO.getUserId(), requestDTO.getActivityLogs()
+                    String.valueOf(requestDTO.getUserId()), requestDTO.getActivityLogs()
             );
 
             return ResponseEntity.ok(new ResultResponse(200,
