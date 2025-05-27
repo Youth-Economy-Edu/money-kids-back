@@ -1,9 +1,7 @@
 package com.moneykidsback.dto.request;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 
 // 데이터 구조 맵핑 위한 DTO (DB 요청 용도 아님)
 @Getter

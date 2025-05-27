@@ -1,7 +1,7 @@
 package com.moneykidsback.repository;
 
 
-import com.moneykidsback.dto.request.StockChangeRateDto;
+import com.moneykidsback.dto.response.StockChangeRateDto;
 import com.moneykidsback.model.Stock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
-public class RankingRepositoryTest {
+public class StockRepositoryTest {
 
     @Autowired
     private StockRepository stockRepository;

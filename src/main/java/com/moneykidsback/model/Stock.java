@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+//todo: PostgreSQL 로 바꿔야됨
 @Entity
 @Getter
 @Setter

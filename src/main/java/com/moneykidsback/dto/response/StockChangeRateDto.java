@@ -1,12 +1,8 @@
-package com.moneykidsback.dto.request;
+package com.moneykidsback.dto.response;
 
-
-import com.moneykidsback.model.Stock;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 import java.time.LocalDateTime;
-import java.util.List;
 
 // 변동률 계산용 DTO
 @Getter
@@ -18,8 +14,4 @@ public class StockChangeRateDto {
     private String category;
     private LocalDateTime updateAt;
     private double changeRate; // 변동률(%)
-
-
-    public static List<Stock> change;
-
 }

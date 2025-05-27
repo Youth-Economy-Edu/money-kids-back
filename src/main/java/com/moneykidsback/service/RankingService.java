@@ -1,6 +1,6 @@
 package com.moneykidsback.service;
 
-import com.moneykidsback.dto.request.StockChangeRateDto;
+import com.moneykidsback.dto.response.StockChangeRateDto;
 import com.moneykidsback.model.Stock;
 import com.moneykidsback.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
