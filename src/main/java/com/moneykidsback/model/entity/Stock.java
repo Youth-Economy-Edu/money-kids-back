@@ -4,13 +4,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Stock {
     // Q1: 주식이 새로 생성되거나 삭제되는 일이 있을 것인가?
     // A1: 없음. 종목 테이블은 fixed라고 생각할 것.
