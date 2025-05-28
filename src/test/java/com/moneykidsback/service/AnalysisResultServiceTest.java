@@ -29,6 +29,7 @@ public class AnalysisResultServiceTest {
     @Mock
     private TendencyAnalysisRepository tendencyAnalysisRepository;
 
+    // 테스트를 위한 사용자 ID
     @Test
     void getLatestResult_withValidUser_returnsResult() {
         // given

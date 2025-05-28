@@ -18,7 +18,7 @@ public class AnalysisResultService {
         TendencyAnalysis result = tendencyAnalysisRepository.findTopByUserIdOrderByCreatedAtDesc(userId)
                 .orElseThrow(() -> new NoSuchElementException("사용자 없음"));
 
-        // Map<String, Double> 구성
+        // 각 투자 성향 유형에 대한 점수를 Map<String, Double> 으로 변환
         Map<String, Double> scores = new LinkedHashMap<>();
         scores.put("공격투자형", result.getAggressiveScore());
         scores.put("적극투자형", result.getActiveScore());

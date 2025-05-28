@@ -57,6 +57,7 @@ public class AnalysisPerformService {
         }
     }
 
+    // 활동 로그를 기반으로 LLM에 전달할 프롬프트를 생성
     private String buildPromptFromLogs(List<ActivityLogDTO> logs) {
         StringBuilder sb = new StringBuilder();
 

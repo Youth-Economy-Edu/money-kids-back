@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 // 클래스설명 한국어로
 // 사용자의 행동 분석 결과를 저장하는 엔티티
-// TODO: 데이터베이스 설계에 따라 필요한 필드 추가 논의!
 
 @Entity
 @Table(name = "TENDENCY_ANALYSIS")

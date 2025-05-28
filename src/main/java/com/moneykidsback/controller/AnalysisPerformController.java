@@ -50,7 +50,7 @@ public class AnalysisPerformController {
     record ResultResponse(int code, Object data, String msg) {
     }
 
-    // 사용자 ID를 기반으로 최신 분석 결과 조회 API
+    // 사용자의 최신 분석 결과를 가져오는 API
     @GetMapping("/result")
     public ResponseEntity<?> getLatestResult(@RequestParam("user_id") String userId) {
         try {

@@ -35,6 +35,7 @@ public class AnalysisPerformServiceTest {
     @Test
     void performAnalysis_withValidLogs_returnsResult() throws Exception {
         // given
+        // 테스트를 위한 사용자 ID와 활동 로그
         Long userId = 1L;
         List<ActivityLogDTO> activityLogs = List.of(
                 new ActivityLogDTO("quiz", "2025-05-10T12:00:00Z", Map.of(

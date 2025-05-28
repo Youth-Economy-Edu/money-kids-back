@@ -10,6 +10,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+// 사용자 행동 분석 결과를 나타내는 DTO
 public class AnalysisResultResponseDTO {
 
     private String userId;
