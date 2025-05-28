@@ -60,7 +60,7 @@ public class AnalysisPerformServiceTest {
         given(llmClient.requestAnalysis(any())).willReturn(fakeLlmResponse);
 
         // when
-        TendencyAnalysis result = analysisPerformService.performAnalysis(userId, activityLogs);
+        TendencyAnalysis result = analysisPerformService.performAnalysis(String.valueOf(userId), activityLogs);
 
         // then
         assertEquals("모험형", result.getType());

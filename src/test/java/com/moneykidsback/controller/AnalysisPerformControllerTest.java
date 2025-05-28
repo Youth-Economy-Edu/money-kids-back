@@ -53,7 +53,7 @@ class AnalysisPerformControllerTest {
     void performAnalysis_success() throws Exception {
         // given
         AnalysisPerformRequestDTO request = new AnalysisPerformRequestDTO();
-        request.setUserId(1L);
+        request.setUserId(String.valueOf(1L));
         request.setActivityLogs(List.of(
                 new ActivityLogDTO("quiz", "2025-05-10T12:00:00Z", Map.of(
                         "quiz_id", "q123", "answer", "O", "correct", true
@@ -61,7 +61,7 @@ class AnalysisPerformControllerTest {
         ));
 
         TendencyAnalysis fakeResult = TendencyAnalysis.builder()
-                .userId(1L)
+                .userId(String.valueOf(1L))
                 .type("안정형")
                 .score(87.5)
                 .feedback("당신은 안정적인 투자자입니다.")

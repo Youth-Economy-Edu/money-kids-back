@@ -1,6 +1,7 @@
 package com.moneykidsback.service;
 
 
+import com.moneykidsback.model.dto.response.AnalysisResultResponseDTO;
 import com.moneykidsback.model.entity.TendencyAnalysis;
 import com.moneykidsback.repository.TendencyAnalysisRepository;
 import org.junit.jupiter.api.Test;
@@ -31,20 +32,29 @@ public class AnalysisResultServiceTest {
     @Test
     void getLatestResult_withValidUser_returnsResult() {
         // given
-        Long userId = 1L;
-        TendencyAnalysis result = new TendencyAnalysis(
-                null, userId, "안정형", 85.0, "위험 회피 성향입니다.", LocalDateTime.now()
-        );
+        String userId = String.valueOf(1L);
+        TendencyAnalysis result = TendencyAnalysis.builder()
+                .userId(userId)
+                .createdAt(LocalDateTime.now())
+                .type("안정형")
+                .score(75.0)
+                .aggressiveScore(10.0)
+                .activeScore(5.0)
+                .neutralScore(3.0)
+                .stableSeekingScore(2.0)
+                .stableScore(1.0)
+                .feedback("안정적인 투자 성향입니다.")
+                .build();
 
         given(tendencyAnalysisRepository.findTopByUserIdOrderByCreatedAtDesc(userId))
                 .willReturn(Optional.of(result));
 
         // when
-        Optional<TendencyAnalysis> response = analysisResultService.getLatestResult(userId);
+        AnalysisResultResponseDTO response = analysisResultService.getLatestResult(userId);
 
         // then
-        assertTrue(response.isPresent());
-        assertEquals("안정형", response.get().getType());
+        assertEquals("user123", response.getUserId());
+        assertEquals("안정형", response.getAnalysisResult().getFinalType());
+        assertEquals(75.0, response.getAnalysisResult().getFinalScore());
     }
-
 }

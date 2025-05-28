@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class AnalysisPerformRequestDTO {
     @JsonProperty("user_id")
-    private Long userId; // 사용자 ID
+    private String userId; // 사용자 ID
 
     @JsonProperty("activity_logs")
     private List<ActivityLogDTO> activityLogs; // 사용자 행동 로그
