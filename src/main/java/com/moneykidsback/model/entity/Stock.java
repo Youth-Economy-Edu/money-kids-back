@@ -1,14 +1,12 @@
 package com.moneykidsback.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
 @Setter
 @ToString
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class Stock {
@@ -16,7 +14,6 @@ public class Stock {
     // A1: 없음. 종목 테이블은 fixed라고 생각할 것.
     @Id
     @Column(name = "code")
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private String code; // 주식 코드
 
     @Column(name = "name")

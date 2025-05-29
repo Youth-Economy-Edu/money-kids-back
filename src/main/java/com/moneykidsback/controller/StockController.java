@@ -3,9 +3,7 @@ package com.moneykidsback.controller;
 import com.moneykidsback.model.entity.Stock;
 import com.moneykidsback.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,7 +15,7 @@ public class StockController {
     // 주식 코드로 종목 찾기
     @GetMapping("/code")
     public List<Stock> getStocksByCode(
-            @RequestBody String code
+            @RequestParam String code
     ) {
         return stockService.findByCode(code);
     }
@@ -25,7 +23,7 @@ public class StockController {
     // 종목 이름으로 종목 찾기
     @GetMapping("/name")
     public List<Stock> getStocksByName(
-            @RequestBody String name
+            @RequestParam String name
     ) {
         return stockService.findByName(name);
     }
@@ -33,8 +31,16 @@ public class StockController {
     // 카테고리로 종목 찾기
     @GetMapping("/category")
     public List<Stock> getStocksByCategory(
-            @RequestBody String category
+            @RequestParam String category
     ) {
         return stockService.findByCategory(category);
+    }
+
+    // 주식 정보 변경
+    @PutMapping("/updatePrice")
+    public Stock updateStockPrice(
+            @RequestBody Stock stock
+    ) {
+        return stockService.updateStock(stock);
     }
 }

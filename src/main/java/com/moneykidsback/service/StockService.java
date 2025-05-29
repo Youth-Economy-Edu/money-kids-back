@@ -24,4 +24,8 @@ public class StockService {
     public List<Stock> findByCategory(String category) {
         return stockRepository.findByCategory(category);
     }
+
+    public Stock updateStock(Stock stock) {
+        return stockRepository.save(stock);
+    }
 }
