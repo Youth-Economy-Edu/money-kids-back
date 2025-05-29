@@ -17,4 +17,12 @@ public interface TendencyAnalysisRepository extends JpaRepository<TendencyAnalys
     // 가장 최신 성향 분석 결과 가져오기 (userId 기준)
     Optional <TendencyAnalysis> findTopByUserIdOrderByCreatedAtDesc(String userId);
 
+    // 특정 사용자의 성향 분석 결과를 생성일 기준으로 내림차순 정렬하여 가져오기
+    List<TendencyAnalysis> findByUserIdOrderByCreatedAtDesc(String userId);
+
+    // 특정 사용자의 성향 분석 결과 삭제
+    void deleteByUserId(String userId);
+    boolean existsByUserId(String userId);
+
+    List<TendencyAnalysis> findAllByUserId(String userId);
 }

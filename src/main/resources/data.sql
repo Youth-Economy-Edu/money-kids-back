@@ -114,6 +114,6 @@ CREATE TABLE `TENDENCY_ANALYSIS` (
                              `feedback`              TEXT            NULL,       -- AI 피드백 문장
                              `created_at`            TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
 
-                             PRIMARY KEY (`ID`, `user_id`),
+                             PRIMARY KEY (`ID`),
                              FOREIGN KEY (`user_id`) REFERENCES `USER` (`ID`)
 ) ENGINE=InnoDB;

@@ -53,11 +53,11 @@ public class OpenAIClient implements LLMClient {
         );
 
         // 전체 JSON 응답에서 content만 추출
-            try {
-                JsonNode root = objectMapper.readTree(response.getBody());
-                return root.at("/choices/0/message/content").asText();
-            } catch (Exception e) {
-                throw new RuntimeException("OpenAI 응답 파싱 실패", e);
-            }
+        try {
+            JsonNode root = objectMapper.readTree(response.getBody());
+            return root.at("/choices/0/message/content").asText();
+        } catch (Exception e) {
+            throw new RuntimeException("OpenAI 응답 파싱 실패", e);
         }
+    }
 }

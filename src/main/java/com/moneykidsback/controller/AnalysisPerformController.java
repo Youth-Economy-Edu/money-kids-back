@@ -24,6 +24,7 @@ public class AnalysisPerformController {
     private final AnalysisResultService analysisResultService;
     private final AnalysisPerformService analysisPerformService;
 
+    // 사용자의 활동 로그를 기반으로 투자 성향 분석을 수행하는 API
     @PostMapping("/perform")
     public ResponseEntity<?> performAnalysis(@RequestBody AnalysisPerformRequestDTO requestDTO) {
         if (requestDTO.getUserId() == null || requestDTO.getActivityLogs() == null || requestDTO.getActivityLogs().isEmpty()) {
@@ -68,6 +69,51 @@ public class AnalysisPerformController {
             return ResponseEntity.status(404).body("해당 사용자의 분석 결과를 찾을 수 없습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("서버 내부 오류");
+        }
+    }
+
+    // 특정 사용자의 성향 분석 결과를 생성일 기준으로 내림차순 정렬하여 가져오는 API
+    @GetMapping("/history")
+    public ResponseEntity<?> getAnalysisHistory(@RequestParam("user_id") String userId) {
+        List<TendencyAnalysis> history = analysisResultService.getAnalysisHistory(userId);
+
+        List<Map<String, Object>> response = history.stream().map(record -> {
+            Map<String, Double> scores = Map.of(
+                    "공격성", record.getAggressiveness(),
+                    "적극성", record.getAssertiveness(),
+                    "위험중립성", record.getRiskNeutrality(),
+                    "안정성 추구", record.getSecurityOriented(),
+                    "신중함", record.getCalmness()
+            );
+
+            return Map.of(
+                    "userId", record.getUserId(),
+                    "analysisResult", Map.of(
+                            "scores", scores,
+                            "finalType", record.getType(),
+                            "feedback", record.getFeedback()
+                    ),
+                    "createdAt", record.getCreatedAt()
+            );
+        }).toList();
+
+        return ResponseEntity.ok(Map.of(
+                "code", 200,
+                "data", response,
+                "msg", "200 OK"
+        ));
+    }
+
+    // 특정 사용자의 성향 분석 결과 전체 삭제 API
+    @DeleteMapping("/result")
+    public ResponseEntity<?> deleteAnalysis(@RequestParam("user_id") String userId) {
+        try {
+            analysisResultService.deleteAnalysisByUserId(userId);
+            return ResponseEntity.ok(Map.of("code", 200, "msg", "200 ok"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("code", 400, "msg", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("code", 500, "msg", "서버 내부 오류"));
         }
     }
 }

@@ -25,6 +25,7 @@ public class TendencyAnalysis {
     @Column(name = "user_id", nullable = false)
     private String userId;
 
+    // 투자 성격 점수들
     @Column(name = "aggressiveness", nullable = false)
     private double aggressiveness;
 
@@ -40,12 +41,15 @@ public class TendencyAnalysis {
     @Column(name = "calmness", nullable = false)
     private double calmness;
 
+    // 분석 결과의 유형 (예: 공격투자형, 적극투자형 등)
     @Column(name = "type", nullable = false)
     private String type;
 
+    // 분석 결과에 대한 피드백
     @Column(name = "feedback")
     private String feedback;
 
+    // 분석 결과 생성일시
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 }

@@ -36,4 +36,20 @@ public class AnalysisResultService {
                         .build())
                 .build();
     }
+
+    // 특정 사용자의 성향 분석 결과를 생성일 기준으로 내림차순 정렬하여 가져오기
+    public List<TendencyAnalysis> getAnalysisHistory(String userId) {
+        return tendencyAnalysisRepository.findByUserIdOrderByCreatedAtDesc(userId);
+    }
+
+    // 특정 사용자의 성향 분석 결과 전체 삭제
+    public void deleteAnalysisByUserId(String userId) {
+        List<TendencyAnalysis> results = tendencyAnalysisRepository.findAllByUserId(userId);
+
+        if (results.isEmpty()) {
+            throw new NoSuchElementException("해당 사용자의 성향 분석 결과가 없습니다.");
+        }
+
+        tendencyAnalysisRepository.deleteAll(results);
+    }
 }
