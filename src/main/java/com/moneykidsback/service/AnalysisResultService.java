@@ -18,24 +18,22 @@ public class AnalysisResultService {
         TendencyAnalysis result = tendencyAnalysisRepository.findTopByUserIdOrderByCreatedAtDesc(userId)
                 .orElseThrow(() -> new NoSuchElementException("사용자 없음"));
 
-        // 각 투자 성향 유형에 대한 점수를 Map<String, Double> 으로 변환
-        Map<String, Double> scores = new LinkedHashMap<>();
-        scores.put("공격투자형", result.getAggressiveScore());
-        scores.put("적극투자형", result.getActiveScore());
-        scores.put("위험중립형", result.getNeutralScore());
-        scores.put("안정추구형", result.getStableSeekingScore());
-        scores.put("안정형", result.getStableScore());
+        // 영문 성향 점수만 전달
+        Map<String, Double> traits = new LinkedHashMap<>();
+        traits.put("aggressiveness", result.getAggressiveness());
+        traits.put("assertiveness", result.getAssertiveness());
+        traits.put("risk_neutrality", result.getRiskNeutrality());
+        traits.put("security_oriented", result.getSecurityOriented());
+        traits.put("calmness", result.getCalmness());
 
         return AnalysisResultResponseDTO.builder()
                 .userId(result.getUserId())
                 .createdAt(result.getCreatedAt())
                 .analysisResult(AnalysisResultResponseDTO.AnalysisResult.builder()
-                        .scores(scores)
+                        .scores(traits)
                         .finalType(result.getType())
-                        .finalScore(result.getScore())
                         .feedback(result.getFeedback())
                         .build())
                 .build();
     }
-
 }

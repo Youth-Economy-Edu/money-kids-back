@@ -33,17 +33,16 @@ public class AnalysisResultServiceTest {
     @Test
     void getLatestResult_withValidUser_returnsResult() {
         // given
-        String userId = String.valueOf(1L);
+        String userId = "user123";
         TendencyAnalysis result = TendencyAnalysis.builder()
                 .userId(userId)
                 .createdAt(LocalDateTime.now())
                 .type("안정형")
-                .score(75.0)
-                .aggressiveScore(10.0)
-                .activeScore(5.0)
-                .neutralScore(3.0)
-                .stableSeekingScore(2.0)
-                .stableScore(1.0)
+                .aggressiveness(10.0)
+                .assertiveness(5.0)
+                .riskNeutrality(3.0)
+                .securityOriented(2.0)
+                .calmness(1.0)
                 .feedback("안정적인 투자 성향입니다.")
                 .build();
 
@@ -56,6 +55,7 @@ public class AnalysisResultServiceTest {
         // then
         assertEquals("user123", response.getUserId());
         assertEquals("안정형", response.getAnalysisResult().getFinalType());
-        assertEquals(75.0, response.getAnalysisResult().getFinalScore());
+        assertTrue(response.getAnalysisResult().getScores().containsKey("안정형"));
+        assertEquals(1.0, response.getAnalysisResult().getScores().get("안정형"));
     }
 }

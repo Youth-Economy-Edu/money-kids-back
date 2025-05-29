@@ -25,31 +25,27 @@ public class TendencyAnalysis {
     @Column(name = "user_id", nullable = false)
     private String userId;
 
-    @Column(name = "aggressive_score", nullable = false)
-    private double aggressiveScore;
+    @Column(name = "aggressiveness", nullable = false)
+    private double aggressiveness;
 
-    @Column(name = "active_score", nullable = false)
-    private double activeScore;
+    @Column(name = "assertiveness", nullable = false)
+    private double assertiveness;
 
-    @Column(name = "neutral_score", nullable = false)
-    private double neutralScore;
+    @Column(name = "risk_neutrality", nullable = false)
+    private double riskNeutrality;
 
-    @Column(name = "stable_seeking_score", nullable = false)
-    private double stableSeekingScore;
+    @Column(name = "security_oriented", nullable = false)
+    private double securityOriented;
 
-    @Column(name = "stable_score", nullable = false)
-    private double stableScore;
+    @Column(name = "calmness", nullable = false)
+    private double calmness;
 
     @Column(name = "type", nullable = false)
     private String type;
-
-    @Column(name = "score", nullable = false)
-    private double score;
 
     @Column(name = "feedback")
     private String feedback;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
 }

@@ -100,20 +100,19 @@ CREATE TABLE `USER-QUIZ` (
 
 -- 사용자 성향 분석 결과 저장 테이블
 CREATE TABLE `TENDENCY_ANALYSIS` (
-                             `ID`	INT	NOT NULL,
-                             `user_id`	VARCHAR(50)	NOT NULL,
+                             `ID`                    INT             NOT NULL,
+                             `user_id`               VARCHAR(50)     NOT NULL,
 
-                            -- 성향 점수들
-                             `aggressive_score`	DOUBLE	NOT NULL,			-- 공격투자형
-                             `active_score`		DOUBLE	NOT NULL,			-- 적극투자형
-                             `neutral_score`		DOUBLE	NOT NULL,			-- 위험중립형
-                             `stable_seeking_score`	DOUBLE	NOT NULL,			-- 안정추구형
-                             `stable_score`		DOUBLE	NOT NULL,			-- 안정형
+                            -- 성향별 점수 (개별 성격 특성 강도)
+                             `aggressiveness`        DOUBLE          NOT NULL,   -- 공격성
+                             `assertiveness`         DOUBLE          NOT NULL,   -- 자기 주장, 적극성
+                             `risk_neutrality`       DOUBLE          NOT NULL,   -- 위험을 중립적으로 받아들임
+                             `security_oriented`     DOUBLE          NOT NULL,   -- 안정 추구 성향
+                             `calmness`              DOUBLE          NOT NULL,   -- 신중함, 차분함
 
-                             `type`		VARCHAR(100)	NOT NULL,			-- 최종 성향
-                             `score`		DOUBLE		NOT NULL,			-- 최종 유형 점수
-                             `feedback`	TEXT		NULL,				-- AI 피드백 문장
-                             `created_at`	TIMESTAMP	DEFAULT CURRENT_TIMESTAMP,
+                             `type`                  VARCHAR(100)    NOT NULL,   -- 종합적 성향 분류 (e.g., 공격 투자형)
+                             `feedback`              TEXT            NULL,       -- AI 피드백 문장
+                             `created_at`            TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
 
                              PRIMARY KEY (`ID`, `user_id`),
                              FOREIGN KEY (`user_id`) REFERENCES `USER` (`ID`)

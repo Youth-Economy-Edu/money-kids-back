@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 // API 요청을 처리하는 컨트롤러
@@ -35,9 +36,16 @@ public class AnalysisPerformController {
                     String.valueOf(requestDTO.getUserId()), requestDTO.getActivityLogs()
             );
 
-            return ResponseEntity.ok(new ResultResponse(200,
-                    new AnalysisPerformResponseDTO(result.getType(), result.getScore(), result.getFeedback()),
-                    "200 ok"));
+            // finalScore 제거됨 → type, feedback만 전달
+            return ResponseEntity.ok(new ResultResponse(
+                    200,
+                    Map.of(
+                            "type", result.getType(),
+                            "feedback", result.getFeedback()
+                    ),
+                    "200 ok"
+            ));
+
         } catch (Exception e) {
             e.printStackTrace(); // or log.error("분석 실패", e);
             return ResponseEntity.status(500).body(

@@ -65,7 +65,6 @@ public class AnalysisPerformServiceTest {
 
         // then
         assertEquals("모험형", result.getType());
-        assertEquals(88.5, result.getScore());
         assertEquals("당신은 도전적인 투자자입니다.", result.getFeedback());
         verify(tendencyAnalysisRepository).save(any(TendencyAnalysis.class));
     }

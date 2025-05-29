@@ -53,7 +53,7 @@ class AnalysisPerformControllerTest {
     void performAnalysis_success() throws Exception {
         // given
         AnalysisPerformRequestDTO request = new AnalysisPerformRequestDTO();
-        request.setUserId(String.valueOf(1L));
+        request.setUserId("user123");
         request.setActivityLogs(List.of(
                 new ActivityLogDTO("quiz", "2025-05-10T12:00:00Z", Map.of(
                         "quiz_id", "q123", "answer", "O", "correct", true
@@ -61,11 +61,15 @@ class AnalysisPerformControllerTest {
         ));
 
         TendencyAnalysis fakeResult = TendencyAnalysis.builder()
-                .userId(String.valueOf(1L))
+                .userId("user123")
                 .type("안정형")
-                .score(87.5)
                 .feedback("당신은 안정적인 투자자입니다.")
                 .createdAt(LocalDateTime.now())
+                .aggressiveness(10.0)
+                .assertiveness(5.0)
+                .riskNeutrality(3.0)
+                .securityOriented(2.0)
+                .calmness(1.0)
                 .build();
 
         // Mockito mock 설정
@@ -77,8 +81,7 @@ class AnalysisPerformControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.type").value("안정형"))
-                .andExpect(jsonPath("$.data.score").value(87.5));
+                .andExpect(jsonPath("$.data.type").value("안정형"));
     }
 
     // 새로운 mock 등록용 Config

@@ -24,29 +24,30 @@ public class AnalysisPerformService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public TendencyAnalysis performAnalysis(String userId, List<ActivityLogDTO> activityLogs) {
-        // 1. 프롬프트 생성
         String prompt = buildPromptFromLogs(activityLogs);
-
-        // 2. LLM 호출
         String llmResponse = llmClient.requestAnalysis(prompt);
         System.out.println("📥 OpenAI raw response:\n" + llmResponse);
 
-        // 3. JSON 응답 파싱
         try {
-            // ✅ GPT가 JSON 객체 자체를 응답하므로 바로 파싱
             JsonNode result = objectMapper.readTree(llmResponse);
-
             JsonNode scores = result.get("scores");
+
+            // 한국어 → 내부 필드명 매핑
+            double aggressiveness = scores.get("공격투자형").asDouble();
+            double assertiveness = scores.get("적극투자형").asDouble();
+            double riskNeutrality = scores.get("위험중립형").asDouble();
+            double securityOriented = scores.get("안정추구형").asDouble();
+            double calmness = scores.get("안정형").asDouble();
+
             return tendencyAnalysisRepository.save(
                     TendencyAnalysis.builder()
                             .userId(userId)
-                            .aggressiveScore(scores.get("공격투자형").asDouble())
-                            .activeScore(scores.get("적극투자형").asDouble())
-                            .neutralScore(scores.get("위험중립형").asDouble())
-                            .stableSeekingScore(scores.get("안정추구형").asDouble())
-                            .stableScore(scores.get("안정형").asDouble())
+                            .aggressiveness(aggressiveness)
+                            .assertiveness(assertiveness)
+                            .riskNeutrality(riskNeutrality)
+                            .securityOriented(securityOriented)
+                            .calmness(calmness)
                             .type(result.get("final_type").asText())
-                            .score(result.get("final_score").asDouble())
                             .feedback(result.get("feedback").asText())
                             .createdAt(LocalDateTime.now())
                             .build()
@@ -58,17 +59,24 @@ public class AnalysisPerformService {
     }
 
     // 활동 로그를 기반으로 LLM에 전달할 프롬프트를 생성
+    // 활동 로그를 기반으로 LLM에 전달할 프롬프트를 생성
     private String buildPromptFromLogs(List<ActivityLogDTO> logs) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("당신은 청소년 경제교육 분석 전문가입니다.\n");
-        sb.append("다음은 한 학생의 최근 경제 활동 로그입니다.\n");
-        sb.append("이 활동을 바탕으로 아래 다섯 가지 성향에 대해 각각 0~100점 사이 점수를 부여하고,\n");
-        sb.append("가장 점수가 높은 성향을 final_type으로, 해당 점수를 final_score로 선택해 주세요.\n");
-        sb.append("그리고 해당 성향에 대한 한 문장 피드백도 포함해주세요.\n\n");
+        sb.append("당신은 청소년의 투자 및 경제 성향을 분석하는 전문가입니다.\n");
+        sb.append("다음은 한 학생의 최근 활동 로그입니다.\n");
+        sb.append("이 활동 내용을 바탕으로 아래 다섯 가지 성격 특성에 대해 각각 0~100점 사이의 점수를 부여해주세요:\n");
+        sb.append("- 공격성 (aggressiveness)\n");
+        sb.append("- 자기주장성 (assertiveness)\n");
+        sb.append("- 위험중립성 (risk neutrality)\n");
+        sb.append("- 안정추구성 (security oriented)\n");
+        sb.append("- 차분함 (calmness)\n\n");
+
+        sb.append("그리고 전체 점수를 종합적으로 판단하여 해당 학생의 최종 투자 성향을 `final_type`으로 제시하고,\n");
+        sb.append("그에 맞는 1문장 피드백(`feedback`)을 제공해주세요.\n");
+        sb.append("가장 높은 점수만으로 판단하지 말고, 종합적인 패턴과 성격 조합을 고려해주세요.\n\n");
 
         sb.append("JSON 응답 형식은 다음과 같습니다. 설명 없이 반드시 이 구조만 그대로 반환해주세요:\n\n");
-
         sb.append("{\n");
         sb.append("  \"scores\": {\n");
         sb.append("    \"공격투자형\": 85.0,\n");
@@ -78,12 +86,10 @@ public class AnalysisPerformService {
         sb.append("    \"안정형\": 25.0\n");
         sb.append("  },\n");
         sb.append("  \"final_type\": \"공격투자형\",\n");
-        sb.append("  \"final_score\": 85.0,\n");
-        sb.append("  \"feedback\": \"당신은 시장 평균 이상의 수익을 추구하며, 위험 감수에 적극적인 투자자입니다.\"\n");
-        sb.append("}\n\n");
+        sb.append("  \"feedback\": \"...\"\n");
+        sb.append("}\n");
 
         sb.append("학생 활동 로그:\n");
-
         for (ActivityLogDTO log : logs) {
             sb.append("- ").append(summarizeLog(log)).append("\n");
         }
