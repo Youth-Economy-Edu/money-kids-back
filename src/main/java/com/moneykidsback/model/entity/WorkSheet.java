@@ -19,4 +19,39 @@ public class WorkSheet {
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content; // 개념 설명 ex) 수요란 물건을 구입하고자...
 
+    // --- Getter ---
+    public int getConcept_id() {
+        return concept_id;
+    }
+
+    public int getDifficulty() {
+        return difficulty;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    // --- Setter ---
+    public void setConcept_id(int concept_id) {
+        this.concept_id = concept_id;
+    }
+
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 }
+
+

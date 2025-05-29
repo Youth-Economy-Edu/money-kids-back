@@ -1,5 +1,6 @@
 package com.moneykidsback.controller;
 
+import com.moneykidsback.model.DTO.Request.WorkSheetRequestDto;
 import com.moneykidsback.model.entity.WorkSheet;
 import com.moneykidsback.service.WorkSheetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +26,11 @@ public class WorkSheetController {
         return workSheetService.getConceptById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<String> createConcept(@RequestBody WorkSheetRequestDto dto) {
+        workSheetService.saveConcept(dto);
+        return ResponseEntity.ok("개념 저장 완료");
     }
 }
