@@ -1,7 +1,7 @@
 package com.moneykidsback.service;
 
-import com.moneykidsback.dto.response.StockChangeRateDto;
-import com.moneykidsback.model.Stock;
+import com.moneykidsback.model.dto.response.StockChangeRateDto;
+import com.moneykidsback.model.entity.Stock;
 import com.moneykidsback.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -50,24 +50,14 @@ public class RankingService {
 
     // 변동률 기준 순위
     // todo: 주식 테이블에 beforPrice 컬럼 필요함
-    public List<Stock> getStocksOrderedByChangeRateDesc() {
+    public List<StockChangeRateDto> getStocksOrderedByChangeRateDesc() {
         try {
             List<StockChangeRateDto> dtoList = stockRepository.findAllOrderByChangeRateDescWithDto();
-            List<Stock> stocks = new ArrayList<>();
-            for (StockChangeRateDto dto : dtoList) {
-                Stock stock = new Stock();
-                stock.setCode(dto.getCode());
-                stock.setName(dto.getName());
-                stock.setPrice(dto.getPrice());
-                stock.setCategory(dto.getCategory());
-                stock.setUpdatedAt(dto.getUpdateAt());
-                // 필요하다면 beforePrice 등 추가 세팅
-                stocks.add(stock);
-            }
-            return stocks;
-        } catch (Exception e) {
+            return dtoList;
+        } catch (Exception e) { //예외처리
             logger.log(Level.SEVERE, "변동률 기준 주식 조회 실패", e);
-            return Collections.emptyList();
+            return Collections.emptyList(); // 빈 리스트 반환
         }
     }
+
 }

@@ -1,4 +1,4 @@
-package com.moneykidsback.dto.request;
+package com.moneykidsback.model.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

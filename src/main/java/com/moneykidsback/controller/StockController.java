@@ -1,6 +1,7 @@
 package com.moneykidsback.controller;
 
-import com.moneykidsback.model.Stock;
+import com.moneykidsback.model.dto.response.StockChangeRateDto;
+import com.moneykidsback.model.entity.Stock;
 import com.moneykidsback.service.RankingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,19 +18,30 @@ public class StockController {
     @Autowired
     private RankingService rankingService;
 
-    //전체 순위 조회
+
+    //todo: 주가, 등락율 순위 API 하나로 합치기
+
+    //순위 조회
     @GetMapping("/stocks/ranking")
-    public ResponseEntity<List<Stock>> getStockRanking(@RequestParam(required = true) String standard) {
-        List<Stock> stocks;
-        if(standard.equals("price")) {
-            stocks = rankingService.getStocksOrderedByPriceDesc(); // 주가 기준 순위 조회
+    public ResponseEntity<?> getStockRanking(@RequestParam String standard) {
+        // 주가 기준 순위 조회
+        if ("price".equalsIgnoreCase(standard)) {
+            List<Stock> stocksPrice = rankingService.getStocksOrderedByPriceDesc();
+            if (stocksPrice.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(stocksPrice);
+        }
+        // 변동률 기준 순위 조회
+        else if ("changeRate".equalsIgnoreCase(standard)) {
+            List<StockChangeRateDto> stocksRate = rankingService.getStocksOrderedByChangeRateDesc();
+            if (stocksRate.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(stocksRate);
         } else {
-            stocks = rankingService.getStocksOrderedByChangeRateDesc();  //todo: 변동률 기준 순위 메소드(논의 필요)
+            return ResponseEntity.noContent().build();
         }
-        if (stocks.isEmpty()) {
-            return ResponseEntity.noContent().build(); //내용이 없음(204)
-        }
-        return ResponseEntity.ok(stocks); //정상 반환(200)
     }
 
     //종목별 순위 조회
