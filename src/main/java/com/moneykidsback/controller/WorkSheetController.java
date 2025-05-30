@@ -1,13 +1,14 @@
 package com.moneykidsback.controller;
 
-import com.moneykidsback.model.DTO.Request.WorkSheetRequestDto;
+import com.moneykidsback.model.DTO.Response.WorkSheetDetailDto;
+import com.moneykidsback.model.DTO.Response.WorkSheetResponseDto;
 import com.moneykidsback.model.entity.WorkSheet;
 import com.moneykidsback.service.WorkSheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/worksheet")
@@ -16,21 +17,32 @@ public class WorkSheetController {
     @Autowired
     private WorkSheetService workSheetService;
 
+    // ✅ 난이도별 목록 (id + title만)
     @GetMapping("/difficulty/{level}")
-    public ResponseEntity<List<WorkSheet>> getConcepts(@PathVariable int level) {
-        return ResponseEntity.ok(workSheetService.getConceptsByDifficulty(level));
+    public ResponseEntity<Map<String, Object>> getConceptIds(@PathVariable int level) {
+        List<WorkSheetResponseDto> ids = workSheetService.getConceptsByDifficulty(level);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("ids", ids);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<WorkSheet> getConceptDetail(@PathVariable int id) {
-        return workSheetService.getConceptById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/searchFor/{id}")
+    public ResponseEntity<Map<String, Object>> getConceptDetail(@PathVariable int id) {
+        Optional<WorkSheetDetailDto> optionalConcept = workSheetService.getConceptById(id);
+        Map<String, Object> response = new HashMap<>();
+
+        if (optionalConcept.isPresent()) {
+            response.put("code", 200);
+            response.put("data", optionalConcept.get());
+            response.put("msg", "개념 단건 조회 성공");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("code", 404);
+            response.put("msg", "해당 개념이 존재하지 않음");
+            return ResponseEntity.status(404).body(response);
+        }
     }
 
-    @PostMapping
-    public ResponseEntity<String> createConcept(@RequestBody WorkSheetRequestDto dto) {
-        workSheetService.saveConcept(dto);
-        return ResponseEntity.ok("개념 저장 완료");
-    }
 }
+

@@ -7,8 +7,8 @@ import jakarta.persistence.Id;
 @Entity(name = "WorkSheet")
 public class WorkSheet {
     @Id
-    @Column(name = "concept_id", nullable = false)
-    private int concept_id; // 개념 고유 식별 아이디
+    @Column(name = "id", nullable = false)
+    private int id; // 개념 고유 식별 아이디
 
     @Column(name = "difficulty")
     private int difficulty; // 경제 개념 난이도 (1~5)
@@ -20,8 +20,8 @@ public class WorkSheet {
     private String content; // 개념 설명 ex) 수요란 물건을 구입하고자...
 
     // --- Getter ---
-    public int getConcept_id() {
-        return concept_id;
+    public int getId() {
+        return id;
     }
 
     public int getDifficulty() {
@@ -37,8 +37,8 @@ public class WorkSheet {
     }
 
     // --- Setter ---
-    public void setConcept_id(int concept_id) {
-        this.concept_id = concept_id;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setDifficulty(int difficulty) {
