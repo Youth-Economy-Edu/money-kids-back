@@ -1,8 +1,8 @@
 package com.moneykidsback.repository;
 
 
-import com.moneykidsback.dto.response.StockChangeRateDto;
-import com.moneykidsback.model.Stock;
+import com.moneykidsback.model.dto.response.StockChangeRateDto;
+import com.moneykidsback.model.entity.Stock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
