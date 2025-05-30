@@ -2,7 +2,7 @@ package com.moneykidsback.controller;
 
 import com.moneykidsback.model.DTO.Response.WorkSheetDetailDto;
 import com.moneykidsback.model.DTO.Response.WorkSheetResponseDto;
-import com.moneykidsback.model.entity.WorkSheet;
+//import com.moneykidsback.model.entity.Worksheet;
 import com.moneykidsback.service.WorkSheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +27,14 @@ public class WorkSheetController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/searchFor/{id}")
-    public ResponseEntity<Map<String, Object>> getConceptDetail(@PathVariable int id) {
-        Optional<WorkSheetDetailDto> optionalConcept = workSheetService.getConceptById(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> getConceptDetail(@PathVariable Integer id) {
+        WorkSheetDetailDto optionalConcept = workSheetService.getConceptById(id);
         Map<String, Object> response = new HashMap<>();
 
-        if (optionalConcept.isPresent()) {
+        if (optionalConcept != null) {
             response.put("code", 200);
-            response.put("data", optionalConcept.get());
+            response.put("data", optionalConcept);
             response.put("msg", "개념 단건 조회 성공");
             return ResponseEntity.ok(response);
         } else {

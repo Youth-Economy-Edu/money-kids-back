@@ -1,9 +1,12 @@
 package com.moneykidsback.repository;
 
-import com.moneykidsback.model.entity.WorkSheet;
+import com.moneykidsback.model.entity.Worksheet;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
-public interface WorkSheetRepository extends JpaRepository<WorkSheet, Integer> {
-    List<WorkSheet> findByDifficulty(int difficulty);
+@Repository
+public interface WorkSheetRepository extends JpaRepository<Worksheet, Integer> {
+    List<Worksheet> findByDifficulty(int difficulty);
 }
