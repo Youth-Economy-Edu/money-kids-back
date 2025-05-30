@@ -13,25 +13,25 @@ public class StockController {
     StockService stockService;
 
     // 주식 코드로 종목 찾기
-    @GetMapping("/code")
+    @GetMapping("/code/{code}")
     public List<Stock> getStocksByCode(
-            @RequestParam String code
+            @PathVariable String code
     ) {
         return stockService.findByCode(code);
     }
 
     // 종목 이름으로 종목 찾기
-    @GetMapping("/name")
+    @GetMapping("/name/{name}")
     public List<Stock> getStocksByName(
-            @RequestParam String name
+            @PathVariable String name
     ) {
         return stockService.findByName(name);
     }
 
     // 카테고리로 종목 찾기
-    @GetMapping("/category")
+    @GetMapping("/category/{category}")
     public List<Stock> getStocksByCategory(
-            @RequestParam String category
+            @PathVariable String category
     ) {
         return stockService.findByCategory(category);
     }
