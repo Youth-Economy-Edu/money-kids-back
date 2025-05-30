@@ -9,6 +9,7 @@ import lombok.Data;
 public class AnalysisPerformResponseDTO {
     private String type; // 행동 유형
     private String feedback; // 행동 피드백
+    private String guidance; // 행동 개선 가이드라인
 
     // 성격 특성 점수들
     private double aggressiveness;    // 공격성

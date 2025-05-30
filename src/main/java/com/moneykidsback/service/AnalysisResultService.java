@@ -33,6 +33,7 @@ public class AnalysisResultService {
                         .scores(traits)
                         .finalType(result.getType())
                         .feedback(result.getFeedback())
+                        .guidance(result.getGuidance())
                         .build())
                 .build();
     }

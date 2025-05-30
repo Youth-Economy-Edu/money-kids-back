@@ -25,6 +25,7 @@ public class AnalysisResultResponseDTO {
     public static class AnalysisResult {
         private Map<String, Double> scores;
         private String finalType;
+        private String guidance;
         private String feedback;
     }
 }

@@ -31,24 +31,27 @@ public class AnalysisPerformService {
         try {
             JsonNode result = objectMapper.readTree(llmResponse);
             JsonNode scores = result.get("scores");
+            JsonNode feedback = result.get("feedback");
+            JsonNode guidance = result.get("guidance");
 
             // 한국어 → 내부 필드명 매핑
-            double aggressiveness = scores.get("공격투자형").asDouble();
-            double assertiveness = scores.get("적극투자형").asDouble();
-            double riskNeutrality = scores.get("위험중립형").asDouble();
-            double securityOriented = scores.get("안정추구형").asDouble();
-            double calmness = scores.get("안정형").asDouble();
+            double aggressiveness = scores.get("공격성").asDouble();
+            double assertiveness = scores.get("적극성").asDouble();
+            double riskNeutrality = scores.get("위험중립성").asDouble();
+            double securityOriented = scores.get("안정추구성").asDouble();
+            double calmness = scores.get("신중함").asDouble();
 
             return tendencyAnalysisRepository.save(
                     TendencyAnalysis.builder()
                             .userId(userId)
-                            .aggressiveness(aggressiveness)
-                            .assertiveness(assertiveness)
-                            .riskNeutrality(riskNeutrality)
-                            .securityOriented(securityOriented)
-                            .calmness(calmness)
-                            .type(result.get("final_type").asText())
-                            .feedback(result.get("feedback").asText())
+                            .aggressiveness(aggressiveness) // 공격성
+                            .assertiveness(assertiveness) // 적극성
+                            .riskNeutrality(riskNeutrality) // 위험중립성
+                            .securityOriented(securityOriented) // 안정추구성
+                            .calmness(calmness) // 신중함
+                            .type(result.get("final_type").asText()) // 최종 투자 성향
+                            .feedback(result.get("feedback").asText()) // 피드백
+                            .guidance(guidance != null ? guidance.asText() : "") // 지도방법
                             .createdAt(LocalDateTime.now())
                             .build()
             );
@@ -59,37 +62,48 @@ public class AnalysisPerformService {
     }
 
     // 활동 로그를 기반으로 LLM에 전달할 프롬프트를 생성
-    // 활동 로그를 기반으로 LLM에 전달할 프롬프트를 생성
     private String buildPromptFromLogs(List<ActivityLogDTO> logs) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("당신은 청소년의 투자 및 경제 성향을 분석하는 전문가입니다.\n");
-        sb.append("다음은 한 학생의 최근 활동 로그입니다.\n");
-        sb.append("이 활동 내용을 바탕으로 아래 다섯 가지 성격 특성에 대해 각각 0~100점 사이의 점수를 부여해주세요:\n");
+        sb.append("다음은 한 학생의 최근 활동 로그입니다.\n\n");
+
+        sb.append("이 활동 내용을 바탕으로 다음 다섯 가지 성격 특성에 대해 각각 0~100점 사이의 점수를 부여해주세요:\n");
         sb.append("- 공격성 (aggressiveness)\n");
-        sb.append("- 자기주장성 (assertiveness)\n");
+        sb.append("- 적극성 (assertiveness)\n");
         sb.append("- 위험중립성 (risk neutrality)\n");
         sb.append("- 안정추구성 (security oriented)\n");
-        sb.append("- 차분함 (calmness)\n\n");
+        sb.append("- 신중함 (calmness)\n\n");
 
-        sb.append("그리고 전체 점수를 종합적으로 판단하여 해당 학생의 최종 투자 성향을 `final_type`으로 제시하고,\n");
-        sb.append("그에 맞는 1문장 피드백(`feedback`)을 제공해주세요.\n");
-        sb.append("가장 높은 점수만으로 판단하지 말고, 종합적인 패턴과 성격 조합을 고려해주세요.\n\n");
+        sb.append("그리고 다음 항목들을 포함하여 JSON 형태로 정확히 응답해 주세요:\n");
+        sb.append("1. scores: 위의 다섯 특성에 대한 점수 (JSON 오브젝트)\n");
+        sb.append("2. final_type: 이 학생의 최종 투자 성향을 요약한 키워드 \n");
+        sb.append("예를 들어:\n");
+        sb.append("- 공격투자형: 높은 수익을 선호하며 위험도 감수함\n");
+        sb.append("- 적극투자형: 도전적이지만 일정한 안정도 고려함\n");
+        sb.append("- 위험중립형: 수익과 위험을 균형 있게 바라봄\n");
+        sb.append("- 안정추구형: 손실을 싫어하고 안정적인 자산을 선호함\n");
+        sb.append("- 안정형: 매우 신중하고 보수적인 성향\n");
+        sb.append("가장 높은 점수 하나만 보고 판단하지 말고,\n");
+        sb.append("전체 특성의 조합과 패턴을 고려해서 종합적인 투자 성향(`final_type`)을 도출해 주세요.\n");
+        sb.append("3. feedback: 학생 본인에게 전달할 간단한 피드백 (1문장)\n");
+        sb.append("4. guidance: 부모가 이 학생의 성향을 이해하고 교육하는 데 도움이 될 수 있도록, 구체적인 지도 방법을 설명하는 2~3문장의 문단 형태 텍스트\n\n");
 
-        sb.append("JSON 응답 형식은 다음과 같습니다. 설명 없이 반드시 이 구조만 그대로 반환해주세요:\n\n");
+        sb.append("JSON 응답 예시는 다음과 같습니다 (꼭 이 구조로 반환해 주세요):\n");
         sb.append("{\n");
         sb.append("  \"scores\": {\n");
-        sb.append("    \"공격투자형\": 85.0,\n");
-        sb.append("    \"적극투자형\": 72.0,\n");
-        sb.append("    \"위험중립형\": 63.0,\n");
-        sb.append("    \"안정추구형\": 40.0,\n");
-        sb.append("    \"안정형\": 25.0\n");
+        sb.append("    \"공격성\": 85.0,\n");
+        sb.append("    \"적극성\": 72.0,\n");
+        sb.append("    \"위험중립성\": 63.0,\n");
+        sb.append("    \"안정추구성\": 40.0,\n");
+        sb.append("    \"신중함\": 25.0\n");
         sb.append("  },\n");
         sb.append("  \"final_type\": \"공격투자형\",\n");
-        sb.append("  \"feedback\": \"...\"\n");
-        sb.append("}\n");
+        sb.append("  \"feedback\": \"학생은 도전적이며 높은 수익을 추구하는 성향입니다.\",\n");
+        sb.append("  \"guidance\": \"자녀가 가진 높은 도전 성향을 긍정적으로 이끌어주세요. 실제 투자 사례를 함께 분석해보거나, 모의 주식 활동을 통해 스스로 판단하는 힘을 기를 수 있도록 도와주는 것이 좋습니다.\"\n");
+        sb.append("}\n\n");
 
-        sb.append("학생 활동 로그:\n");
+        sb.append("🧾 활동 로그:\n");
         for (ActivityLogDTO log : logs) {
             sb.append("- ").append(summarizeLog(log)).append("\n");
         }

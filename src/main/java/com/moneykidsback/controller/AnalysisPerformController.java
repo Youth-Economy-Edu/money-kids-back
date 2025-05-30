@@ -42,7 +42,8 @@ public class AnalysisPerformController {
                     200,
                     Map.of(
                             "type", result.getType(),
-                            "feedback", result.getFeedback()
+                            "feedback", result.getFeedback(),
+                            "guidance", result.getGuidance()
                     ),
                     "200 ok"
             ));
@@ -91,7 +92,8 @@ public class AnalysisPerformController {
                     "analysisResult", Map.of(
                             "scores", scores,
                             "finalType", record.getType(),
-                            "feedback", record.getFeedback()
+                            "feedback", record.getFeedback(),
+                            "guidance", record.getGuidance()
                     ),
                     "createdAt", record.getCreatedAt()
             );
@@ -105,6 +107,7 @@ public class AnalysisPerformController {
     }
 
     // 특정 사용자의 성향 분석 결과 전체 삭제 API
+    // 굳이 필요할 것 같지 않으나 이스터에그로 남겨둠
     @DeleteMapping("/result")
     public ResponseEntity<?> deleteAnalysis(@RequestParam("user_id") String userId) {
         try {

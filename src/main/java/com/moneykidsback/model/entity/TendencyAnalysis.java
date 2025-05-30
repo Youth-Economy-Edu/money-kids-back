@@ -49,6 +49,10 @@ public class TendencyAnalysis {
     @Column(name = "feedback")
     private String feedback;
 
+    // 분석 결과에 대한 지도 방법
+    @Column(name = "guidance")
+    private String guidance;
+
     // 분석 결과 생성일시
     @Column(name = "created_at")
     private LocalDateTime createdAt;

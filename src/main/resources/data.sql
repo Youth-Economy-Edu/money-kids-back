@@ -112,6 +112,7 @@ CREATE TABLE `TENDENCY_ANALYSIS` (
 
                              `type`                  VARCHAR(100)    NOT NULL,   -- 종합적 성향 분류 (e.g., 공격 투자형)
                              `feedback`              TEXT            NULL,       -- AI 피드백 문장
+                             `guidance`                    TEXT            NULL,       -- AI 가이드 문장
                              `created_at`            TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
 
                              PRIMARY KEY (`ID`),
