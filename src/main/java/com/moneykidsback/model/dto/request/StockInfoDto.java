@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class StockInfoDto {
-    private String code;
+    private int code;
     private String name;
     private int price;
     private String category;

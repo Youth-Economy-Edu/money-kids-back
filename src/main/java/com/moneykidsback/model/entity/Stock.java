@@ -14,12 +14,14 @@ import java.time.LocalDateTime;
 @Table(name = "stock")
 public class Stock {
     @Id
-    private String code;
-    @Column()
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int ID;
+    @Column(name = "name")
     private String name;
-    @Column
+    @Column(name = "price")
     private int price = 0;
-    @Column
+    @Column(name = "category")
     private String category;
 
     //todo: 가격 변동률 떄문에 아래 두개컬럼 추가 논의 필요
