@@ -12,9 +12,8 @@ public class StockService {
 
     @Autowired
     StockRepository stockRepository;
-
-    public List<Stock> findByCode(String code) {
-        return stockRepository.findByCode(code);
+    public List<Stock> findByCode(String id) {
+        return stockRepository.findAllById(List.of(id));
     }
 
     public List<Stock> findByName(String name) {

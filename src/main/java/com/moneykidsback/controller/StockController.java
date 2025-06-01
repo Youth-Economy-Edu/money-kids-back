@@ -7,31 +7,32 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController(value = "/stock")
+@RestController
+@RequestMapping("/api/stocks")
 public class StockController {
     @Autowired
     StockService stockService;
 
     // 주식 코드로 종목 찾기
-    @GetMapping("/code/{code}")
-    public List<Stock> getStocksByCode(
-            @PathVariable String code
+    @GetMapping("/code")
+    public List<Stock> getStocksById(
+            @RequestParam String id
     ) {
-        return stockService.findByCode(code);
+        return stockService.findByCode(id);
     }
 
     // 종목 이름으로 종목 찾기
-    @GetMapping("/name/{name}")
+    @GetMapping("/name")
     public List<Stock> getStocksByName(
-            @PathVariable String name
+            @RequestParam String name
     ) {
         return stockService.findByName(name);
     }
 
     // 카테고리로 종목 찾기
-    @GetMapping("/category/{category}")
+    @GetMapping("/category")
     public List<Stock> getStocksByCategory(
-            @PathVariable String category
+            @RequestParam String category
     ) {
         return stockService.findByCategory(category);
     }
