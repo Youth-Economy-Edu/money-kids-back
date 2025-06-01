@@ -16,7 +16,7 @@ public class Stock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int ID;
+    private int ID; //todo : 자료형 원래 String 이었는데, String 으로 바꾸면 @GeneratedValue(strategy = GenerationType.IDENTITY) 가 안먹힘
     @Column(name = "name")
     private String name;
     @Column(name = "price")
