@@ -14,8 +14,6 @@ public class ArticleService {
     @Autowired
     private ArticleRepository articleRepository;
 
-    private final ArticleAIClient articleAIClient;
-
     // 주식과 관련된 기사 찾기
     public Article findArticleByStockId(String stockId) {
         return articleRepository.findByStockId(stockId);
