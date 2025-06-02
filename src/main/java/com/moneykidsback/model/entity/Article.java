@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "article")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,7 +19,7 @@ public class Article {
     private int id; // 기사 ID
 
     @Column(name = "stock_id")
-    private int stockId; // 대상 주식 ID
+    private String stockId; // 대상 주식 ID
 
     @Column(name = "title")
     private String title; // 기사 제목

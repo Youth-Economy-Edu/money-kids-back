@@ -13,15 +13,15 @@ public class StockController {
     StockService stockService;
 
     // 주식 코드로 종목 찾기
-    @GetMapping("/code/{code}")
-    public List<Stock> getStocksByCode(
-            @PathVariable String code
+    @GetMapping("/code")
+    public List<Stock> getStocksById(
+            @PathVariable String id
     ) {
-        return stockService.findByCode(code);
+        return stockService.findByCode(id);
     }
 
     // 종목 이름으로 종목 찾기
-    @GetMapping("/name/{name}")
+    @GetMapping("/name")
     public List<Stock> getStocksByName(
             @PathVariable String name
     ) {
@@ -29,7 +29,7 @@ public class StockController {
     }
 
     // 카테고리로 종목 찾기
-    @GetMapping("/category/{category}")
+    @GetMapping("/category")
     public List<Stock> getStocksByCategory(
             @PathVariable String category
     ) {

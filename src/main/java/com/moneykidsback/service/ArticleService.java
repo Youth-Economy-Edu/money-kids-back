@@ -3,6 +3,7 @@ package com.moneykidsback.service;
 import com.moneykidsback.model.entity.Article;
 import com.moneykidsback.repository.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,8 +12,8 @@ public class ArticleService {
     private ArticleRepository articleRepository;
 
     // 주식과 관련된 기사 찾기
-    public Article findArticleByStockCode(String stockCode) {
-        return articleRepository.findByStockCode(stockCode);
+    public Article findArticleByStockId(String stockId) {
+        return articleRepository.findByStockId(stockId);
     }
 
     // AI 기사 등록
