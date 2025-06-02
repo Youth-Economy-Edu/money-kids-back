@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 public class StockChangeRateDto {
-    private int code;
+    private String code;
     private String name;
     private int price;
     private String category;

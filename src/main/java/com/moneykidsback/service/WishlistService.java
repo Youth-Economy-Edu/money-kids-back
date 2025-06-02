@@ -39,8 +39,8 @@ public class WishlistService {
     }
 
     // 위시리스트 조회
-    public List<Stock> getWishlistByUserId(Integer userId) {
-        if (userId == null || userId <= 0) {
+    public List<Stock> getWishlistByUserId(String userId) {
+        if (userId == null) {
             throw new IllegalArgumentException("userId는 null이거나 0 이하일 수 없습니다.");
         }
         List<Stock> wishlist = wishlistRepository.findStocksByUserId(userId);

@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class SaveWishlistDto {
-    private int userId;
-    private int stockId;
+    private String userId;
+    private String stockId;
 }
