@@ -1,14 +1,14 @@
 package com.moneykidsback.controller;
 
+import com.moneykidsback.model.dto.request.SaveWishlistDto;
 import com.moneykidsback.model.dto.response.StockChangeRateDto;
 import com.moneykidsback.model.entity.Stock;
+import com.moneykidsback.model.entity.Users;
 import com.moneykidsback.service.RankingService;
+import com.moneykidsback.service.WishlistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,9 +17,8 @@ import java.util.List;
 public class StockController {
     @Autowired
     private RankingService rankingService;
-
-
-    //todo: 주가, 등락율 순위 API 하나로 합치기
+    @Autowired
+    private WishlistService wishlistService;
 
     //순위 조회
     @GetMapping("/stocks/ranking")
@@ -60,4 +59,27 @@ public class StockController {
         }
         return ResponseEntity.ok(stocks); //정상 반환(200)
     }
+
+
+    // 주식 위시리스트에 저장/삭제(토글)
+    @PostMapping("/stocks/favorite")
+    public void saveWishlist(@RequestBody SaveWishlistDto saveWishlistDto) {
+        wishlistService.saveWishlist(saveWishlistDto);
+    }
+
+    // 위시리스트 조회
+    @GetMapping("/stocks/favorite")
+    public ResponseEntity<List<Stock>> getWishlistByUserId(@RequestParam Integer userId) {
+        List<Stock> wishlist = wishlistService.getWishlistByUserId(userId);
+        if (wishlist.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 내용이 없음(204)
+        }
+        return ResponseEntity.ok(wishlist); // 정상 반환(200)
+    }
+
+    // 위시리스트에서 주식 삭제
+//    @DeleteMapping("/stocks/favorite")
+//    public void deleteWishlist(@RequestBody SaveWishlistDto saveWishlistDto) {
+//        wishlistService.deleteWishlist(saveWishlistDto);
+//    }
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface StockRepository extends JpaRepository<Stock, String> {
+public interface StockRepository extends JpaRepository<Stock, Integer> {
 
 
     Stock findByID(int id);
