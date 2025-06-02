@@ -14,7 +14,7 @@ DROP TABLE IF EXISTS stock;
 DROP TABLE IF EXISTS user;
 
 -- 외래키 체크 다시 켜기
-SET FOREIGN_KEY_CHECKS = 1;a
+SET FOREIGN_KEY_CHECKS = 1;
 -- 사용자 테이블
 CREATE TABLE user (
                       id VARCHAR(50) NOT NULL,
@@ -101,23 +101,25 @@ CREATE TABLE completion (
 
 -- 주식 거래 로그
 CREATE TABLE stock_log (
-                          id VARCHAR(255) NOT NULL,
-                          user_id VARCHAR(50) NOT NULL,
-                          stock_id VARCHAR(50) NOT NULL,
-                          log_date VARCHAR(20),
-                          quantity INT,
-                          PRIMARY KEY (id, user_id, stock_id),
-                          FOREIGN KEY (user_id) REFERENCES user(id),
-                          FOREIGN KEY (stock_id) REFERENCES stock(id)
+                           id VARCHAR(255) NOT NULL,
+                           user_id VARCHAR(50) NOT NULL,
+                           stock_id VARCHAR(50) NOT NULL,
+                           log_date VARCHAR(20),
+                           quantity INT,
+                           PRIMARY KEY (id, user_id, stock_id),
+                           FOREIGN KEY (user_id) REFERENCES user(id),
+                           FOREIGN KEY (stock_id) REFERENCES stock(id)
 ) ENGINE=InnoDB;
 
 -- 퀴즈 풀이 이력
+
 CREATE TABLE user_quiz (
                            id INT NOT NULL AUTO_INCREMENT,
                            user_id VARCHAR(50) NOT NULL,
                            quiz_id INT NOT NULL,
                            solve_date VARCHAR(20),
                            correct BOOLEAN COMMENT '풀이일자 있을 시 정답 여부',
+                           points INT DEFAULT 0,  -- ⭐ 포인트 추가
                            PRIMARY KEY (id, user_id, quiz_id),
                            FOREIGN KEY (user_id) REFERENCES user(id),
                            FOREIGN KEY (quiz_id) REFERENCES quiz(id)
