@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface WorkSheetRepository extends JpaRepository<Worksheet, Integer> {
+public interface WorksheetRepository extends JpaRepository<Worksheet, Integer> {
     List<Worksheet> findByDifficulty(int difficulty);
 }

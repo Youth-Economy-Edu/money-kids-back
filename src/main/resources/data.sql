@@ -14,7 +14,7 @@ DROP TABLE IF EXISTS stock;
 DROP TABLE IF EXISTS user;
 
 -- 외래키 체크 다시 켜기
-SET FOREIGN_KEY_CHECKS = 1;
+SET FOREIGN_KEY_CHECKS = 1;a
 -- 사용자 테이블
 CREATE TABLE user (
                       id VARCHAR(50) NOT NULL,

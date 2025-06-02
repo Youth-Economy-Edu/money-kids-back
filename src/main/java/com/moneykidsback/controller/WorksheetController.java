@@ -1,26 +1,29 @@
 package com.moneykidsback.controller;
-
-import com.moneykidsback.model.DTO.Response.WorkSheetDetailDto;
-import com.moneykidsback.model.DTO.Response.WorkSheetResponseDto;
-//import com.moneykidsback.model.entity.Worksheet;
-import com.moneykidsback.service.WorkSheetService;
+import com.moneykidsback.model.dto.response.WorksheetDetailResponseDto;
+import com.moneykidsback.model.dto.response.WorksheetResponseDto;
+import com.moneykidsback.service.WorksheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/worksheet")
-public class WorkSheetController {
+public class WorksheetController {
 
     @Autowired
-    private WorkSheetService workSheetService;
+    private WorksheetService worksheetService;
 
     // ✅ 난이도별 목록 (id + title만)
     @GetMapping("/difficulty/{level}")
     public ResponseEntity<Map<String, Object>> getConceptIds(@PathVariable int level) {
-        List<WorkSheetResponseDto> ids = workSheetService.getConceptsByDifficulty(level);
+        List<WorksheetResponseDto> ids = worksheetService.getConceptsByDifficulty(level);
 
         Map<String, Object> response = new HashMap<>();
         response.put("ids", ids);
@@ -29,7 +32,7 @@ public class WorkSheetController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getConceptDetail(@PathVariable Integer id) {
-        WorkSheetDetailDto optionalConcept = workSheetService.getConceptById(id);
+        WorksheetDetailResponseDto optionalConcept = worksheetService.getConceptById(id);
         Map<String, Object> response = new HashMap<>();
 
         if (optionalConcept != null) {
