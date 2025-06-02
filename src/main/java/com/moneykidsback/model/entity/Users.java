@@ -7,11 +7,12 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Table(name = "users")
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
-    private String ID;
+    private int ID;
 
     @Column(name = "password", nullable = false)
     private String password;
@@ -19,7 +20,7 @@ public class Users {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "points" , columnDefinition = "0")
+    @Column(name = "points", columnDefinition = "int default 0")
     private int points;
 
     @Column(name = "tendency")

@@ -16,7 +16,7 @@ public class OpenAiService {
     public String getChatCompletionSync(String prompt) {
         // 요청 객체 만들어서
         ChatCompletionRequestDto request = new ChatCompletionRequestDto();
-        request.setModel("gpt-4-turbo");
+        request.setModel("gpt-3.5-turbo");
         request.setMessages(List.of(new ChatCompletionRequestDto.Message("user", prompt)));
 
         // OpenAI API에 POST 요청

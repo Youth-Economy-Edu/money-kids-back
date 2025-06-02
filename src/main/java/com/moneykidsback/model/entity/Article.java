@@ -16,7 +16,7 @@ public class Article {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id; // 기사 ID
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "stock_id", referencedColumnName = "ID", nullable = false)
     private Stock stockId; // 주식 ID (외래키로 사용될 수 있음, 주식 엔티티와 연관 관계 설정 가능)
 

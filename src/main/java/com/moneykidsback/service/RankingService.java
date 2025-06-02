@@ -52,8 +52,7 @@ public class RankingService {
     // todo: 주식 테이블에 beforPrice 컬럼 필요함
     public List<StockChangeRateDto> getStocksOrderedByChangeRateDesc() {
         try {
-            List<StockChangeRateDto> dtoList = stockRepository.findAllOrderByChangeRateDescWithDto();
-            return dtoList;
+            return stockRepository.findAllOrderByChangeRateDescWithDto();
         } catch (Exception e) { //예외처리
             logger.log(Level.SEVERE, "변동률 기준 주식 조회 실패", e);
             return Collections.emptyList(); // 빈 리스트 반환
