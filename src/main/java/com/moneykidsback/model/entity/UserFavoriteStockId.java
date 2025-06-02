@@ -13,6 +13,6 @@ import java.io.Serializable;
 @Setter
 @EqualsAndHashCode
 public class UserFavoriteStockId implements Serializable {
-    private int userId;
-    private int stockId;
+    private String userId;
+    private String stockId;
 }

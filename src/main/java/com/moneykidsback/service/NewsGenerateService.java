@@ -33,7 +33,7 @@ public class NewsGenerateService {
         int maxRetry = 5;
 
         for (RateForAiNewsDto stock : stocks) {
-            int stockID = stock.getCode(); // 주식 ID
+            String stockID = stock.getCode(); // 주식 ID
             String prompt = makePromptForStock(stock);
             String article = null;
 
@@ -82,7 +82,7 @@ public class NewsGenerateService {
 
     }
 
-    private void saveArticleToDb(int stock, NewsSaveDto article) {
+    private void saveArticleToDb(String stock, NewsSaveDto article) {
         // 리포지토리의 저장 메소드
         Article ArticleEntity = new Article();
 

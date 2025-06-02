@@ -10,10 +10,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface StockRepository extends JpaRepository<Stock, Integer> {
+public interface StockRepository extends JpaRepository<Stock, String> {
 
 
-    Stock findByID(int id);
+    Stock findByID(String id);
 
     // 가격 기준 주식 내림차순(순위) 메소드
     List<Stock> findAllByOrderByPriceDesc();
@@ -24,10 +24,10 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
     // todo: 주식 테이블에 이전가격 컬럼 추가되면 사용가능
     // 변동률을 StockChangeRateDto 형태로 반환
     @Query("SELECT new com.moneykidsback.model.dto.response.StockChangeRateDto(" +
-            "s.ID, s.name, s.price, s.category, s.updatedAt, " +
-            "CASE WHEN s.beforePrice = 0 THEN 0 ELSE ((s.price - s.beforePrice) * 100.0 / s.beforePrice) END) " +
+            "s.ID, s.name, s.price, s.category, s.update_at, " +
+            "CASE WHEN s.before_price = 0 THEN 0 ELSE ((s.price - s.before_price) * 100.0 / s.before_price) END) " +
             "FROM Stock s ORDER BY " +
-            "CASE WHEN s.beforePrice = 0 THEN 0 ELSE ((s.price - s.beforePrice) * 100.0 / s.beforePrice) END DESC")
+            "CASE WHEN s.before_price = 0 THEN 0 ELSE ((s.price - s.before_price) * 100.0 / s.before_price) END DESC")
     List<StockChangeRateDto> findAllOrderByChangeRateDescWithDto();
 
 
@@ -36,9 +36,9 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
             "s.ID, " +
             "s.name, " +
             "s.category, " +   // ★ category 추가!!
-            "CASE WHEN s.beforePrice = 0 THEN 0 ELSE ((s.price - s.beforePrice) * 100.0 / s.beforePrice) END) " +
+            "CASE WHEN s.before_price = 0 THEN 0 ELSE ((s.price - s.before_price) * 100.0 / s.before_price) END) " +
             "FROM Stock s " +
-            "ORDER BY CASE WHEN s.beforePrice = 0 THEN 0 ELSE ((s.price - s.beforePrice) * 100.0 / s.beforePrice) END DESC")
+            "ORDER BY CASE WHEN s.before_price = 0 THEN 0 ELSE ((s.price - s.before_price) * 100.0 / s.before_price) END DESC")
     List<RateForAiNewsDto> findChangeRateForAiNews();
 
 

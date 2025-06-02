@@ -3,7 +3,6 @@ package com.moneykidsback.controller;
 import com.moneykidsback.model.dto.request.SaveWishlistDto;
 import com.moneykidsback.model.dto.response.StockChangeRateDto;
 import com.moneykidsback.model.entity.Stock;
-import com.moneykidsback.model.entity.Users;
 import com.moneykidsback.service.RankingService;
 import com.moneykidsback.service.WishlistService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +15,14 @@ import java.util.List;
 @RequestMapping("/api")
 public class StockController {
     @Autowired
-    private RankingService rankingService;
+    private final RankingService rankingService;
     @Autowired
-    private WishlistService wishlistService;
+    private final WishlistService wishlistService;
+
+    public StockController(RankingService rankingService, WishlistService wishlistService) {
+        this.rankingService = rankingService;
+        this.wishlistService = wishlistService;
+    }
 
     //순위 조회
     @GetMapping("/stocks/ranking")
@@ -69,7 +73,7 @@ public class StockController {
 
     // 위시리스트 조회
     @GetMapping("/stocks/favorite")
-    public ResponseEntity<List<Stock>> getWishlistByUserId(@RequestParam Integer userId) {
+    public ResponseEntity<List<Stock>> getWishlistByUserId(@RequestParam String userId) {
         List<Stock> wishlist = wishlistService.getWishlistByUserId(userId);
         if (wishlist.isEmpty()) {
             return ResponseEntity.noContent().build(); // 내용이 없음(204)
