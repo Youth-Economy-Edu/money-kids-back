@@ -105,4 +105,16 @@ CREATE TABLE STOCKPRICELOG (
                                date VARCHAR(20) NULL,
                                PRIMARY KEY (ID),
                                FOREIGN KEY (stock_id) REFERENCES STOCK (ID)
-) ENGINE=InnoDB
+) ENGINE=InnoDB;
+
+CREATE TABLE `DAILY-QUEST` (
+                               `ID` BIGINT NOT NULL AUTO_INCREMENT,
+                               `user_id` VARCHAR(50) NOT NULL,
+                               `quest_type` VARCHAR(50) NOT NULL,     -- QUIZ, TRADE_COUNT 등
+                               `target` INT NOT NULL,                 -- 목표 수치
+                               `progress` INT NOT NULL DEFAULT 0,     -- 현재 진행 수치
+                               `completed` BOOLEAN NOT NULL DEFAULT FALSE,
+                               `quest_date` DATE NOT NULL,            -- 해당 퀘스트가 생성된 날짜
+                               PRIMARY KEY (`ID`),
+                               FOREIGN KEY (`user_id`) REFERENCES `USER`(`ID`)
+) ENGINE=InnoDB;
