@@ -17,6 +17,9 @@ public class StockPriceLog {
     @JoinColumn(name = "stock_id")
     private Stock stock;
 
+    @Column(name = "price")
+    private int price; // 주식 가격
+
     @Column(name = "date")
     private String date; // 날짜 (YYYY-MM-DD 형식)
 
