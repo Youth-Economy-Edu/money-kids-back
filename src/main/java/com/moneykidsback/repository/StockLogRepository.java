@@ -1,7 +1,6 @@
 package com.moneykidsback.repository;
 
-import com.moneykidsback.model.dto.entity.StockLog;
-import com.moneykidsback.model.dto.entity.StockLogId;
+import com.moneykidsback.model.entity.StockLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.moneykidsback.model.dto.entity;
+package com.moneykidsback.model.entity;
 
 import lombok.*;
 
@@ -8,8 +8,8 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StockLogId implements Serializable {
-    private String id;
+public class UserStockId implements Serializable {
+    private int id;
     private String userId;
     private String stockId;
 }
