@@ -13,7 +13,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/news")
-public class ChatController {
+public class AIController {
 
     private final OpenAiService openAiService;
     private final NewsGenerateService newsGenerateService;

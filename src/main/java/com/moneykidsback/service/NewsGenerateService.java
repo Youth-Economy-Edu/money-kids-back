@@ -26,7 +26,7 @@ public class NewsGenerateService {
         this.articleRepository = articleRepository;
     }
 
-    // 예시 메소드: 주식별 경제기사 자동 생성!
+    // 주식별 경제기사 생성
     public List<String> generateAndSaveNewsForAllStocks() throws InterruptedException {
         List<RateForAiNewsDto> stocks = stockRepository.findChangeRateForAiNews();
         List<String> articles = new ArrayList<>();
