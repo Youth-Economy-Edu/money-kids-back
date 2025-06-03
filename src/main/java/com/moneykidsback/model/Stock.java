@@ -9,21 +9,18 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "`USER`")
-public class User {
+@Table(name = "STOCK")
+public class Stock {
     @Id
     @Column(name = "ID")
     private String id;
 
-    @Column(name = "password", nullable = true)
-    private String password;
-
     @Column(name = "name")
     private String name;
 
-    @Column(name = "points")
-    private int points;
+    @Column(name = "price")
+    private int price;
 
-    @Column(name = "tendency", nullable = true)
-    private String tendency;
+    @Column(name = "category")
+    private String category;
 }

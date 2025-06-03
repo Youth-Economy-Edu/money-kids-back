@@ -13,7 +13,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/users/login/**",  // 로그인 관련 경로
+                                "/api/**",  // 로그인 관련 경로
                                 "/error",               // 오류 처리
                                 "/",                    // 루트 페이지
                                 "/home/**",                // 홈 (로그아웃 후 접근 허용 시)
