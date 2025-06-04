@@ -20,7 +20,6 @@ public class OpenAiService {
     // OpenAI에게 현재 가격 기반 주가를 물어보고, 숫자 추출
     public int getRandomPriceFromOpenAi(int currentPrice) {
         
-
         // 사용자 프롬프트 구성
         String prompt = String.format(
             "현재 주가가 %d원인 주식이 있어. 오늘의 주가를 -30%% ~ +30%% 사이에서 랜덤하게 정해줘. "
@@ -55,7 +54,13 @@ public class OpenAiService {
         String content = message.get("content").toString();
 
         // 숫자만 추출
-        return extractNumber(content);
+        int newPrice = extractNumber(content);
+
+        // 변동률 계산 및 출력(변동 알람, 주가 10퍼센트 변동시 출력)
+        double percentageChange = ((double)(newPrice - currentPrice) / currentPrice) * 100;
+        System.out.printf("주가 변동률: %.2f%% (기존: %d원 → 새 가격: %d원)%n", percentageChange, currentPrice, newPrice);
+
+        return newPrice;
     }
 
     // 응답 문자열에서 첫 번째 숫자 추출
