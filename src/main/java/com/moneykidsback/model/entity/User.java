@@ -3,8 +3,11 @@ package com.moneykidsback.model.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
+
 
 @Entity
+@DynamicUpdate
 @Getter
 @Setter
 @Table(name = "user")  // user는 예약어라 반드시 명시!
@@ -21,7 +24,7 @@ public class User {
     private String name;
 
     @Column
-    private Integer points;
+    private int points;
 
     @Column(length = 100)
     private String tendency;
