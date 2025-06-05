@@ -6,7 +6,6 @@ import com.moneykidsback.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -49,7 +48,6 @@ public class RankingService {
     }
 
     // 변동률 기준 순위
-    // todo: 주식 테이블에 beforPrice 컬럼 필요함
     public List<StockChangeRateDto> getStocksOrderedByChangeRateDesc() {
         try {
             return stockRepository.findAllOrderByChangeRateDescWithDto();
