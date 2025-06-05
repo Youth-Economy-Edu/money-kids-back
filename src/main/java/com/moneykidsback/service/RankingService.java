@@ -6,7 +6,6 @@ import com.moneykidsback.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -48,8 +47,7 @@ public class RankingService {
         }
     }
 
-    // 변동률 기준 순위
-    // todo: 주식 테이블에 beforPrice 컬럼 필요함
+    // 변동률 기준 순위 todo: 차트 실시간 업데이트는 수정님 변동률 로직에서 호출하면 되겠죠?
     public List<StockChangeRateDto> getStocksOrderedByChangeRateDesc() {
         try {
             return stockRepository.findAllOrderByChangeRateDescWithDto();

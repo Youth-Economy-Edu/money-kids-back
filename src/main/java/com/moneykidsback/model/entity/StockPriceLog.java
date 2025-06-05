@@ -19,7 +19,7 @@ public class StockPriceLog {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int ID;
+    private String ID;
 
     @ManyToOne
     @JoinColumn(name = "stock_id")

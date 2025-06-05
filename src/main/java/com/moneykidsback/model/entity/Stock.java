@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class Stock {
     @Id
     @Column(name = "id")
-    private String ID; //todo : 자료형 원래 String 이었는데, String 으로 바꾸면 @GeneratedValue(strategy = GenerationType.IDENTITY) 가 안먹힘
+    private String ID;
     @Column(name = "name")
     private String name;
     @Column(name = "price")

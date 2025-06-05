@@ -21,7 +21,6 @@ public interface StockRepository extends JpaRepository<Stock, String> {
     // 카테고리별로 주식 가격 내림차순으로 정렬된 리스트 반환
     List<Stock> findAllByCategoryOrderByPriceDesc(String category);
 
-    // todo: 주식 테이블에 이전가격 컬럼 추가되면 사용가능
     // 변동률을 StockChangeRateDto 형태로 반환 (StockPriceLog의 volatility 사용)
     @Query("SELECT new com.moneykidsback.model.dto.response.StockChangeRateDto(" +
             "s.ID, s.name, s.price, s.category, s.update_at, spl.volatility) " +
