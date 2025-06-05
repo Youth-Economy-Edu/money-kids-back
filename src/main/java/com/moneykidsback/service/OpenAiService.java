@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 @Service
 public class OpenAiService {
 
-    @Value("${openai.api.key}")
+    @Value("${spring.ai.openai.api-key}")
     private String apiKey;
 
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";

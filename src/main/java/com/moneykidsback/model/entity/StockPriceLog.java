@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "stock_price_logs")
+@Table(name = "stockpricelog")
 @Getter
 @Setter
 public class StockPriceLog {
