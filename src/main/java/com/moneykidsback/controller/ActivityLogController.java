@@ -1,27 +1,35 @@
 package com.moneykidsback.controller;
-// 학생 활동 로그를 분석용으로 조회할 수 있는 관리자용 컨트롤러
+
 import com.moneykidsback.model.dto.response.ActivityLogAnalysisDto;
+import com.moneykidsback.model.entity.ActivityLog;
 import com.moneykidsback.service.ActivityLogService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin/logs")
 @RequiredArgsConstructor
+@RequestMapping("/api/admin/logs")
 public class ActivityLogController {
 
     private final ActivityLogService activityLogService;
-    // [GET] 특정 학생의 최근 활동 로그 30개 반환 (분석용)
+
+    // [1] 최근 30개 로그 조회 (LLM 분석용)
+    @GetMapping("/recent")
+    public List<ActivityLogAnalysisDto> getRecentLogsForAnalysis(@RequestParam String user_id) {
+        return activityLogService.getRecentLogsForAnalysis(user_id);
+    }
+
+    // [2] 페이징 가능한 전체 활동 로그 조회 (프론트 리스트용)
     @GetMapping
-    public ResponseEntity<List<ActivityLogAnalysisDto>> getLogsForAnalysis(@RequestParam("user_id") String userId) {
-        List<ActivityLogAnalysisDto> logs = activityLogService.getRecentLogsForAnalysis(userId);
-        return ResponseEntity.ok(logs);
+    public Page<ActivityLog> getLogs(
+            @RequestParam String user_id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return activityLogService.getLogs(user_id, page, size);
     }
 }
-
