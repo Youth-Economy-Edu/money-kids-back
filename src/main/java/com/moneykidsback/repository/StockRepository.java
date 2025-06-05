@@ -22,23 +22,23 @@ public interface StockRepository extends JpaRepository<Stock, String> {
     List<Stock> findAllByCategoryOrderByPriceDesc(String category);
 
     // todo: 주식 테이블에 이전가격 컬럼 추가되면 사용가능
-    // 변동률을 StockChangeRateDto 형태로 반환
+    // 변동률을 StockChangeRateDto 형태로 반환 (StockPriceLog의 volatility 사용)
     @Query("SELECT new com.moneykidsback.model.dto.response.StockChangeRateDto(" +
-            "s.ID, s.name, s.price, s.category, s.update_at, " +
-            "CASE WHEN s.before_price = 0 THEN 0 ELSE ((s.price - s.before_price) * 100.0 / s.before_price) END) " +
-            "FROM Stock s ORDER BY " +
-            "CASE WHEN s.before_price = 0 THEN 0 ELSE ((s.price - s.before_price) * 100.0 / s.before_price) END DESC")
+            "s.ID, s.name, s.price, s.category, s.update_at, spl.volatility) " +
+            "FROM Stock s JOIN StockPriceLog spl ON s = spl.stock " +
+            "WHERE spl.date = (SELECT MAX(spl2.date) FROM StockPriceLog spl2 WHERE spl2.stock = s) " +
+            "ORDER BY spl.volatility DESC")
     List<StockChangeRateDto> findAllOrderByChangeRateDescWithDto();
 
-
-    // 변동률을 StockChangeRateDto 형태로 반환
+    // 변동률을 StockChangeRateDto 형태로 반환 (StockPriceLog의 volatility 사용)
     @Query("SELECT new com.moneykidsback.model.dto.request.RateForAiNewsDto(" +
             "s.ID, " +
             "s.name, " +
-            "s.category, " +   // ★ category 추가!!
-            "CASE WHEN s.before_price = 0 THEN 0 ELSE ((s.price - s.before_price) * 100.0 / s.before_price) END) " +
-            "FROM Stock s " +
-            "ORDER BY CASE WHEN s.before_price = 0 THEN 0 ELSE ((s.price - s.before_price) * 100.0 / s.before_price) END DESC")
+            "s.category, " +
+            "spl.volatility) " +
+            "FROM Stock s JOIN StockPriceLog spl ON s = spl.stock " +
+            "WHERE spl.date = (SELECT MAX(spl2.date) FROM StockPriceLog spl2 WHERE spl2.stock = s) " +
+            "ORDER BY spl.volatility DESC")
     List<RateForAiNewsDto> findChangeRateForAiNews();
 
 
