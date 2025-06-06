@@ -1,4 +1,4 @@
-package com.moneykidsback.model;
+package com.moneykidsback.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,23 +9,20 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "STOCKLOG")
-public class StockLog {
+@Table(name = "STOCKPRICELOG")
+public class StockPriceLog {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
-    private String id;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "stock_id")
     private Stock stock;
 
+    @Column(name = "volatility")
+    private int volatility;
+
     @Column(name = "date")
     private String date;
-
-    @Column(name = "quantity")
-    private int quantity;
 }

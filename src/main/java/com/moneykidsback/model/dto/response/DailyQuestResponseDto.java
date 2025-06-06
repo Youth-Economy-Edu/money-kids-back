@@ -1,6 +1,6 @@
 package com.moneykidsback.model.dto.response;
 
-import com.moneykidsback.model.DailyQuest;
+import com.moneykidsback.model.entity.DailyQuest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

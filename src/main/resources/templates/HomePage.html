@@ -1,13 +1,29 @@
-<!-- src/main/resources/templates/home.html -->
 <!DOCTYPE html>
-<html>
-<head><title>Home</title></head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>로그인</title>
+</head>
 <body>
-<h1>홈화면</h1>
-
-<form method="POST" action="/api/users/logout">
-    <button type="submit">로그아웃</button>
+<h1>로그인</h1>
+<form action="/api/auth/login" method="post">
+    <div>
+        <label for="id">아이디:</label>
+        <input type="text" id="id" name="id" required>
+    </div>
+    <div>
+        <label for="password">비밀번호:</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    <button type="submit">로그인</button>
 </form>
-
+<div th:if="${errorMessage}" style="color: red;">
+    <p th:text="${errorMessage}"></p>
+</div>
+<hr>
+<a href="/oauth2/authorization/google">구글로 로그인</a>
+<br>
+<a href="/oauth2/authorization/kakao">카카오로 로그인</a>
+<br>
+<a href="/register">회원가입</a>
 </body>
 </html>

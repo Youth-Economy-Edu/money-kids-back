@@ -4,15 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -21,28 +14,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
-                                "/api/**",  // 로그인 관련 경로
-                                "/error",               // 오류 처리
-                                "/",                    // 루트 페이지
-                                "/home/**",                // 홈 (로그아웃 후 접근 허용 시)
-                                "/api/auth/register"
-                        ).permitAll()
+                                // 정적 리소스(CSS, JS, 이미지 등) 경로 허용
+                                "/css/**", "/js/**", "/images/**", "/favicon.ico",
+                                
+                                // 페이지 및 API 경로 허용
+                                "/", "/login", "/register", "/home",
+                                "/api/auth/**",
+                                "/oauth2/**",
+                                "/login/oauth2/code/**",
+                                "/error"
+                        ).permitAll() // 위에 명시된 경로는 모두 접근 허용
+                        
+                        // 나머지 모든 요청은 인증 필요
                         .anyRequest().authenticated()
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/api/users/logout")
-                        .logoutSuccessUrl("/api/users/login") // 로그아웃 후 이동할 경로
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                )
-
-                .csrf(csrf -> csrf.disable()); // 개발 중 CSRF 끄기
-
+                );
+        
         return http.build();
     }
-
-
 }

@@ -1,4 +1,4 @@
-package com.moneykidsback.model;
+package com.moneykidsback.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,7 +1,7 @@
 package com.moneykidsback.repository;
 
-import com.moneykidsback.model.StockLog;
-import com.moneykidsback.model.User;
+import com.moneykidsback.model.entity.StockLog;
+import com.moneykidsback.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

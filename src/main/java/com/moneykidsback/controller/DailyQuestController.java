@@ -1,7 +1,7 @@
 package com.moneykidsback.controller;
 
-import com.moneykidsback.model.DailyQuest;
-import com.moneykidsback.model.User;
+import com.moneykidsback.model.entity.DailyQuest;
+import com.moneykidsback.model.entity.User;
 import com.moneykidsback.model.dto.request.DailyQuestProgressRequestDto;
 import com.moneykidsback.model.dto.response.DailyQuestProgressResponseDto;
 import com.moneykidsback.model.dto.response.DailyQuestResponseDto;

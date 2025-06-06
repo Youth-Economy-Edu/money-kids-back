@@ -1,32 +1,32 @@
 package com.moneykidsback.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
-
 
 @Entity
 @DynamicUpdate
 @Getter
 @Setter
-@Table(name = "user")  // user는 예약어라 반드시 명시!
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "`user`")  // user는 예약어이므로 백틱(`)으로 감싸주는 것이 안전합니다.
 public class User {
 
     @Id
-    @Column(length = 50)
-    private String id;  // VARCHAR(50) PK
+    @Column(name = "id", length = 50) // 컬럼명 명시, 길이 50
+    private String id;
 
-    @Column(length = 255, nullable = false)
+    @Column(name = "password", length = 255, nullable = false) // 길이 255, null 비허용
     private String password;
 
-    @Column(length = 255)
+    @Column(name = "name", length = 255) // 길이 255
     private String name;
 
-    @Column
+    @Column(name = "points")
     private int points;
 
-    @Column(length = 100)
+    @Column(name = "tendency", length = 100, nullable = true) // 길이 100, null 허용
     private String tendency;
 }
-

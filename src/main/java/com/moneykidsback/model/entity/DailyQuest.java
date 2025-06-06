@@ -1,5 +1,6 @@
-package com.moneykidsback.model;
+package com.moneykidsback.model.entity;
 
+import com.moneykidsback.model.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 

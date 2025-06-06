@@ -1,8 +1,9 @@
 package com.moneykidsback.service;
 
-import com.moneykidsback.model.*;
 import com.moneykidsback.model.dto.response.DailyQuestProgressResponseDto;
+import com.moneykidsback.model.entity.DailyQuest;
 import com.moneykidsback.repository.*;
+import com.moneykidsback.model.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;

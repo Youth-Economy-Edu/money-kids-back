@@ -1,7 +1,9 @@
 package com.moneykidsback.service;
 
-import com.moneykidsback.model.*;
 import com.moneykidsback.model.dto.response.AssetPortfolioResponseDTO;
+import com.moneykidsback.model.entity.StockPriceLog;
+import com.moneykidsback.model.entity.UserStock;
+import com.moneykidsback.model.entity.User;
 import com.moneykidsback.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
