@@ -23,11 +23,23 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").authenticated()
-                        .anyRequest().permitAll()
+                        .requestMatchers(
+                                "/api/**",  // 로그인 관련 경로
+                                "/error",               // 오류 처리
+                                "/",                    // 루트 페이지
+                                "/home/**",                // 홈 (로그아웃 후 접근 허용 시)
+                                "/api/auth/register"
+                        ).permitAll()
+                        .anyRequest().authenticated()
                 )
-                .httpBasic(withDefaults())
-                .formLogin(withDefaults());
+                .logout(logout -> logout
+                        .logoutUrl("/api/users/logout")
+                        .logoutSuccessUrl("/api/users/login") // 로그아웃 후 이동할 경로
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                )
+
+                .csrf(csrf -> csrf.disable()); // 개발 중 CSRF 끄기
 
         return http.build();
     }
