@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+//  개발 중 임시로 보안 끄기 위한 클래스
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -26,15 +27,15 @@ public class SecurityConfig {
                         .requestMatchers(
                                 // 정적 리소스(CSS, JS, 이미지 등) 경로 허용
                                 "/css/**", "/js/**", "/images/**", "/favicon.ico",
-                                
+
                                 // 페이지 및 API 경로 허용
                                 "/", "/login", "/register", "/home",
                                 "/api/auth/**",
                                 "/api/users/login/**",
                                 "/error", "/api","/api/quizzes/submit",
-                                "/api/quizzes/result" 
+                                "/api/quizzes/result"
                         ).permitAll() // 위에 명시된 경로는 모두 접근 허용
-                        
+
                         // 나머지 모든 요청은 인증 필요
                         .anyRequest().authenticated()
                 )
@@ -43,7 +44,7 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService))
                         .successHandler(authenticationSuccessHandler)
                 );
-        
+
         return http.build();
     }
 }

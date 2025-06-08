@@ -3,6 +3,7 @@ package com.moneykidsback; // 본인의 패키지 경로
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+// MoneyKidsBack 애플리케이션의 메인 클래스
 @SpringBootApplication
 public class MoneyKidsBackApplication {
 

@@ -13,11 +13,13 @@ CREATE TABLE `STOCK` (
                          `name`	VARCHAR(255)	NULL,
                          `price`	INT	NULL	DEFAULT 0,
                          `category`	VARCHAR(100)	NULL,
-                         PRIMARY KEY (`ID`)
+                         `size` VARCHAR(100)    NULL,
+                             PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB;
 
 CREATE TABLE `QUIZ` (
                         `ID`	INT	NOT NULL,
+                        `category`  VARCHAR(100) NULL,
                         `question`	TEXT	NULL,
                         `answer`	TEXT	NULL,
                         `explanation`	TEXT	NULL,
@@ -98,23 +100,67 @@ CREATE TABLE `USER-QUIZ` (
                              FOREIGN KEY (`quiz_id`) REFERENCES `QUIZ` (`ID`)
 ) ENGINE=InnoDB;
 
--- 사용자 성향 분석 결과 저장 테이블
-CREATE TABLE `TENDENCY_ANALYSIS` (
-                                     `ID`                    INT             NOT NULL,
-                                     `user_id`               VARCHAR(50)     NOT NULL,
-
-    -- 성향별 점수 (개별 성격 특성 강도)
-                                     `aggressiveness`        DOUBLE          NOT NULL,   -- 공격성
-                                     `assertiveness`         DOUBLE          NOT NULL,   -- 자기 주장, 적극성
-                                     `risk_neutrality`       DOUBLE          NOT NULL,   -- 위험을 중립적으로 받아들임
-                                     `security_oriented`     DOUBLE          NOT NULL,   -- 안정 추구 성향
-                                     `calmness`              DOUBLE          NOT NULL,   -- 신중함, 차분함
-
-                                     `type`                  VARCHAR(100)    NOT NULL,   -- 종합적 성향 분류 (e.g., 공격 투자형)
-                                     `feedback`              TEXT            NULL,       -- AI 피드백 문장
-                                     `guidance`                    TEXT            NULL,       -- AI 가이드 문장
-                                     `created_at`            TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
-
-                                     PRIMARY KEY (`ID`),
-                                     FOREIGN KEY (`user_id`) REFERENCES `USER` (`ID`)
+CREATE TABLE `STOCKPRICELOG` (
+                                 `ID`   INT NOT NULL,
+                                 `stock_id` VARCHAR(50) NOT NULL,
+                                 `price` INT NULL,
+                                 `volatility` INT NULL,
+                                 `date` VARCHAR(20) NULL,
+                                 PRIMARY KEY (`ID`),
+                                 FOREIGN KEY (`stock_id`) REFERENCES `STOCK` (`ID`)
 ) ENGINE=InnoDB;
+
+CREATE TABLE `ARTICLE-NOTIFICATION` (
+                                        `ID`   INT NOT NULL,
+                                        `user_id`  VARCHAR(50) NOT NULL,
+                                        `stock_id`   VARCHAR(50) NOT NULL,
+                                        PRIMARY KEY (`ID`, `user_id`, `stock_id`),
+                                        FOREIGN KEY (`user_id`) REFERENCES `USER` (`ID`),
+                                        FOREIGN KEY (`stock_id`) REFERENCES `STOCK` (`ID`)
+) ENGINE=InnoDB;
+
+CREATE TABLE activity_log (
+    -- 기존 컬럼들은 그대로 유지
+                              id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                              user_id VARCHAR(50) NOT NULL,
+                              activity_type VARCHAR(30) NOT NULL,
+                              CHECK (activity_type IN ('QUIZ', 'STOCK_TRADE', 'CONTENT_COMPLETION')),
+
+                              user_quiz_id INT,
+                              user_quiz_user_id VARCHAR(50),
+                              user_quiz_quiz_id INT,
+                              quiz_level VARCHAR(50),
+                              quiz_category VARCHAR(50),
+
+                              stocklog_id VARCHAR(255),
+                              stocklog_user_id VARCHAR(50),
+                              stocklog_stock_id VARCHAR(50),
+                              stock_company_size VARCHAR(50),
+                              stock_category VARCHAR(50),
+
+                              completion_id INT,
+                              completion_user_id VARCHAR(50),    -- COMPLETION 복합키 참조를 위해 추가
+                              completion_worksheet_id INT,        -- COMPLETION 복합키 참조를 위해 추가
+                              worksheet_difficulty VARCHAR(50),
+                              worksheet_category VARCHAR(50),
+
+                              status VARCHAR(20) NOT NULL,
+                              CHECK (status IN ('SUCCESS', 'FAIL', 'PARTIAL')),
+
+                              created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                              FOREIGN KEY (user_id) REFERENCES `USER`(`ID`),
+                              FOREIGN KEY (user_quiz_id, user_quiz_user_id, user_quiz_quiz_id)
+                                  REFERENCES `USER-QUIZ`(`ID`, `user_id`, `quiz_id`),
+                              FOREIGN KEY (stocklog_id, stocklog_user_id, stocklog_stock_id)
+                                  REFERENCES `STOCKLOG`(`ID`, `user_id`, `stock_id`),
+                              FOREIGN KEY (completion_id, completion_user_id, completion_worksheet_id)
+                                  REFERENCES `COMPLETION`(`ID`, `user_id`, `worksheet_id`),
+
+                              CONSTRAINT chk_single_reference CHECK (
+                                  (user_quiz_id IS NOT NULL AND stocklog_id IS NULL AND completion_id IS NULL) OR
+                                  (user_quiz_id IS NULL AND stocklog_id IS NOT NULL AND completion_id IS NULL) OR
+                                  (user_quiz_id IS NULL AND stocklog_id IS NULL AND completion_id IS NOT NULL)
+                                  )
+) ENGINE=InnoDB;
+SHOW TABLES;
