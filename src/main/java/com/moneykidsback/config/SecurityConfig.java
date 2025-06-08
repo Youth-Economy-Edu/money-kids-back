@@ -12,25 +12,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
+//  개발 중 임시로 보안 끄기 위한 클래스
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/admin/logs").authenticated()
-//                        .anyRequest().permitAll()
-//                )
-                .httpBasic(withDefaults())
-                .formLogin(withDefaults());
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()
+                );
 
         return http.build();
     }
-
-
-} 
+}
