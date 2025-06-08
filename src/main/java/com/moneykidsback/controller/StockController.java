@@ -28,6 +28,9 @@ public class StockController {
     @GetMapping("/code")
     public List<Stock> getStocksById(
             @RequestParam String id
+    @GetMapping("/code")
+    public List<Stock> getStocksById(
+            @PathVariable String id
     ) {
         return stockService.findByCode(id);
     }

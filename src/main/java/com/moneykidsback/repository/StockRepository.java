@@ -11,6 +11,8 @@ import java.util.List;
 
 @Repository
 public interface StockRepository extends JpaRepository<Stock, String> {
+    // 주식코드로 종목 찾기
+    List<Stock> findByCode(String code);
 
     // 종목 이름으로 종목 찾기
     List<Stock> findByName(String name);

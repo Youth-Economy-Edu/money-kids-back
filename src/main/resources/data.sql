@@ -97,3 +97,12 @@ CREATE TABLE `USER-QUIZ` (
                              FOREIGN KEY (`user_id`) REFERENCES `USER` (`ID`),
                              FOREIGN KEY (`quiz_id`) REFERENCES `QUIZ` (`ID`)
 ) ENGINE=InnoDB;
+
+CREATE TABLE STOCKPRICELOG (
+                                 ID   INT NOT NULL,
+                                 stock_id VARCHAR(50) NOT NULL,
+                                 volatility INT NULL,
+                                 date VARCHAR(20) NULL,
+                                 PRIMARY KEY (ID),
+                                 FOREIGN KEY (stock_id) REFERENCES STOCK (ID)
+) ENGINE=InnoDB
