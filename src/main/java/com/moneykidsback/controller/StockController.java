@@ -5,6 +5,7 @@ import com.moneykidsback.model.dto.response.StockChangeRateDto;
 import com.moneykidsback.model.entity.Stock;
 import com.moneykidsback.service.RankingService;
 import com.moneykidsback.service.WishlistService;
+//import com.moneykidsback.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +19,17 @@ public class StockController {
     private final RankingService rankingService;
     @Autowired
     private final WishlistService wishlistService;
+    StockService stockService;
 
     public StockController(RankingService rankingService, WishlistService wishlistService) {
         this.rankingService = rankingService;
         this.wishlistService = wishlistService;
+    // 주식 코드로 종목 찾기
+    @GetMapping("/code")
+    public List<Stock> getStocksById(
+            @RequestParam String id
+    ) {
+        return stockService.findByCode(id);
     }
 
     //순위 조회
@@ -45,6 +53,12 @@ public class StockController {
         } else {
             return ResponseEntity.noContent().build();
         }
+    // 종목 이름으로 종목 찾기
+    @GetMapping("/name")
+    public List<Stock> getStocksByName(
+            @RequestParam String name
+    ) {
+        return stockService.findByName(name);
     }
 
     //종목별 순위 조회
@@ -62,6 +76,12 @@ public class StockController {
             return ResponseEntity.noContent().build(); //내용이 없음(204)
         }
         return ResponseEntity.ok(stocks); //정상 반환(200)
+    // 카테고리로 종목 찾기
+    @GetMapping("/category")
+    public List<Stock> getStocksByCategory(
+            @RequestParam String category
+    ) {
+        return stockService.findByCategory(category);
     }
 
 
@@ -69,6 +89,12 @@ public class StockController {
     @PostMapping("/stocks/favorite")
     public void saveWishlist(@RequestBody SaveWishlistDto saveWishlistDto) {
         wishlistService.saveWishlist(saveWishlistDto);
+    // 주식 정보 변경
+    @PutMapping("/updatePrice")
+    public Stock updateStockPrice(
+            @RequestBody Stock stock
+    ) {
+        return stockService.updateStock(stock);
     }
 
     // 위시리스트 조회

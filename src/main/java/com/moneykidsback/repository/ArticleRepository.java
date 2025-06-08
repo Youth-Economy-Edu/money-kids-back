@@ -5,5 +5,10 @@ import org.springframework.stereotype.Repository;
 import com.moneykidsback.model.entity.Article;
 
 @Repository
-public interface ArticleRepository extends JpaRepository<Article, Long> {
+public interface ArticleRepository extends JpaRepository<Article, Integer> {
+    // 주식과 관련된 기사 찾기
+    Article findByStockId(String stockId);
+
+    // AI 기사 등록
+    Article save(Article article);
 }

@@ -1,15 +1,19 @@
 package com.moneykidsback.model.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "article")
 @Getter
 @Setter
-@Table(name = "Article")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Article {
     @Id
     @Column(name = "id", nullable = false)

@@ -2,26 +2,31 @@ package com.moneykidsback.model.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 //todo: PostgreSQL 로 바꿔야됨
 @Entity
+@Table(name = "stock")
 @Getter
 @Setter
-@Table(name = "stock")
 public class Stock {
+    // Q1: 주식이 새로 생성되거나 삭제되는 일이 있을 것인가?
+    // A1: 없음. 종목 테이블은 fixed라고 생각할 것.
     @Id
     @Column(name = "id")
     private String ID;
     @Column(name = "name")
     private String name;
+
     @Column(name = "price")
     private int price = 0;
     @Column(name = "category")
     private String category;
+
+    @Column(name = "size")
+    private String size;
 
     //todo: 가격 변동률 떄문에 아래 두개컬럼 추가 논의 필요
     @Column(nullable = false)

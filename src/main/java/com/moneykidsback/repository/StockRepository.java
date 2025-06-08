@@ -12,7 +12,11 @@ import java.util.List;
 @Repository
 public interface StockRepository extends JpaRepository<Stock, String> {
 
+    // 종목 이름으로 종목 찾기
+    List<Stock> findByName(String name);
 
+    // 카테고리로 종목 찾기
+    List<Stock> findByCategory(String category);
     Stock findByID(String id);
 
     // 가격 기준 주식 내림차순(순위) 메소드
