@@ -1,15 +1,22 @@
 package com.moneykidsback.config;
 
+import com.moneykidsback.service.CustomOAuth2UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -23,13 +30,18 @@ public class SecurityConfig {
                                 // 페이지 및 API 경로 허용
                                 "/", "/login", "/register", "/home",
                                 "/api/auth/**",
-                                "/oauth2/**",
-                                "/login/oauth2/code/**",
-                                "/error"
+                                "/api/users/login/**",
+                                "/error", "/api","/api/quizzes/submit",
+                                "/api/quizzes/result" 
                         ).permitAll() // 위에 명시된 경로는 모두 접근 허용
                         
                         // 나머지 모든 요청은 인증 필요
                         .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService))
+                        .successHandler(authenticationSuccessHandler)
                 );
         
         return http.build();
