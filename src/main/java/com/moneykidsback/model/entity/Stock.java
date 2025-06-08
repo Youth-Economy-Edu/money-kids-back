@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 //todo: PostgreSQL 로 바꿔야됨
 @Table(name = "stock")
+@Entity
 @Getter
 @Setter
 @ToString
@@ -26,7 +27,7 @@ public class Stock {
     private String name;
 
     @Column(name = "price")
-    private int price = 0;
+    private int price;
     @Column(name = "category")
     private String category;
 
