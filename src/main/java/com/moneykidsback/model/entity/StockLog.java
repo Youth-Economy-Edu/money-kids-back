@@ -7,6 +7,8 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
+@Table(name = "STOCKLOG")
+@IdClass(StockLogId.class)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

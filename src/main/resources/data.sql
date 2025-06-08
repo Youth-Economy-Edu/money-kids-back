@@ -118,3 +118,12 @@ CREATE TABLE `TENDENCY_ANALYSIS` (
                                      PRIMARY KEY (`ID`),
                                      FOREIGN KEY (`user_id`) REFERENCES `USER` (`ID`)
 ) ENGINE=InnoDB;
+
+CREATE TABLE STOCKPRICELOG (
+                                 ID   INT NOT NULL,
+                                 stock_id VARCHAR(50) NOT NULL,
+                                 volatility INT NULL,
+                                 date VARCHAR(20) NULL,
+                                 PRIMARY KEY (ID),
+                                 FOREIGN KEY (stock_id) REFERENCES STOCK (ID)
+) ENGINE=InnoDB
