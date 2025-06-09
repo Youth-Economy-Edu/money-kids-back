@@ -6,22 +6,20 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 //todo: PostgreSQL 로 바꿔야됨
-@Table(name = "stock")
 @Entity
+@Table(name = "stock")
 @Getter
 @Setter
 @ToString
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "STOCK")
 public class Stock {
     // Q1: 주식이 새로 생성되거나 삭제되는 일이 있을 것인가?
     // A1: 없음. 종목 테이블은 fixed라고 생각할 것.
     @Id
     @Column(name = "id")
-    private String ID;
+    private String id;
 
     @Column(name = "code")
     private String code; // 주식 코드
@@ -38,19 +36,20 @@ public class Stock {
     @Column(name = "size")
     private String size;
 
-    //todo: 가격 변동률 떄문에 아래 두개컬럼 추가 논의 필요
-    @Column(nullable = false)
-    private int before_price =0;
-    @Column(nullable = false)
-    private LocalDateTime update_at;
+    //todo: 가격 변동률 때문에 아래 컬럼 추가 - 이전 가격 저장용
+    @Column(name = "before_price", nullable = false)
+    private int beforePrice = 0;
 
-    @PrePersist //엔티티가 수정되기 전 실행
+    @Column(name = "update_at", nullable = false)
+    private LocalDateTime updateAt;
+
+    @PrePersist //엔티티가 생성되기 전 실행
     public void prePersist() {
-        this.update_at = java.time.LocalDateTime.now();
+        this.updateAt = LocalDateTime.now();
     }
 
     @PreUpdate // 엔티티가 수정되기 전 실행
     public void preUpdate() {
-        this.update_at = java.time.LocalDateTime.now();
+        this.updateAt = LocalDateTime.now();
     }
 }

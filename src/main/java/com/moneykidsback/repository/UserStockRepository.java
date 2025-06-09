@@ -13,5 +13,5 @@ import java.util.Optional;
 public interface UserStockRepository extends JpaRepository<UserStock, UserStockId> {
     Optional<UserStock> findByUserIdAndStockId(String userId, String stockId);
     List<UserStock> findAllByUserId(String userId);
-    List<UserStock> findAllByUser(String userId);
+    List<UserStock> findByUser(User user);
 }

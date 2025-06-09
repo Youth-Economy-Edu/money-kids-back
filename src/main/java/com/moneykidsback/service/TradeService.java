@@ -96,7 +96,7 @@ public class TradeService {
     // ✅ 전체 거래 내역
     public List<TradeHistoryResponse> getAllTradeHistory(String userId) {
         return stockLogRepository.findByUserId(userId).stream()
-                .map(log -> new TradeHistoryResponse(log.getStockId(), log.getDate(), log.getQuantity()))
+                .map(log -> new TradeHistoryResponse(log.getStock().getId(), log.getDate(), log.getQuantity()))
                 .collect(Collectors.toList());
     }
 
@@ -111,7 +111,7 @@ public class TradeService {
                     }
                     return true;
                 })
-                .map(log -> new TradeHistoryResponse(log.getStockId(), log.getDate(), log.getQuantity()))
+                .map(log -> new TradeHistoryResponse(log.getStock().getId(), log.getDate(), log.getQuantity()))
                 .collect(Collectors.toList());
     }
 }

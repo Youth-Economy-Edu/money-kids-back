@@ -1,15 +1,25 @@
 package com.moneykidsback.controller;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.moneykidsback.model.dto.response.ActivityLogAnalysisDto;
 import com.moneykidsback.model.entity.ActivityLog;
 import com.moneykidsback.service.ActivityLogService;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+/**
+ * 📊 사용자 활동 로그 컨트롤러
+ * - 사용자 행동 데이터 수집
+ * - 학부모용 자녀 활동 조회
+ * - 성향 분석을 위한 데이터 제공
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/logs")

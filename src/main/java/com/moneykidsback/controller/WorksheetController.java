@@ -1,7 +1,8 @@
 package com.moneykidsback.controller;
-import com.moneykidsback.model.dto.response.WorksheetDetailResponseDto;
-import com.moneykidsback.model.dto.response.WorksheetResponseDto;
-import com.moneykidsback.service.WorksheetService;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,10 +10,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.moneykidsback.model.dto.response.WorksheetDetailResponseDto;
+import com.moneykidsback.model.dto.response.WorksheetResponseDto;
+import com.moneykidsback.service.WorksheetService;
 
+/**
+ * 📚 경제 개념 학습 컨트롤러
+ * - 카테고리별 경제 개념 (저축, 투자, 소비 등)
+ * - 난이도별 학습 콘텐츠
+ * - 워크시트 형태의 학습 자료
+ */
 @RestController
 @RequestMapping("/api/worksheet")
 public class WorksheetController {

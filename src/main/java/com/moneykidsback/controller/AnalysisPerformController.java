@@ -1,21 +1,33 @@
 package com.moneykidsback.controller;
 
-import com.moneykidsback.model.dto.request.AnalysisPerformRequestDTO;
-import com.moneykidsback.model.dto.response.AnalysisPerformResponseDTO;
-import com.moneykidsback.model.dto.response.AnalysisResultResponseDTO;
-import com.moneykidsback.model.entity.TendencyAnalysis;
-import com.moneykidsback.service.AnalysisPerformService;
-import com.moneykidsback.service.AnalysisResultService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-// API 요청을 처리하는 컨트롤러
-// 분석 실행 로직: 분석 요청을 받고 결과를 반환하는 역할을 수행
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.moneykidsback.model.dto.request.AnalysisPerformRequestDTO;
+import com.moneykidsback.model.dto.response.AnalysisResultResponseDTO;
+import com.moneykidsback.model.entity.TendencyAnalysis;
+import com.moneykidsback.service.AnalysisPerformService;
+import com.moneykidsback.service.AnalysisResultService;
+
+import lombok.RequiredArgsConstructor;
+
+/**
+ * 📊 투자/경제 성향 분석 컨트롤러
+ * - 사용자 행동 데이터 분석 (LLM 활용)
+ * - 성향별 피드백 제공
+ * - 학부모용 분석 결과 조회
+ * - 성향 변화 이력 추적
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/analysis")

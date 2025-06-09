@@ -23,7 +23,7 @@ import java.util.Map;
 @Primary
 public class OpenAIClient implements LLMClient {
 
-    @Value("${openai.api-key}")
+    @Value("${openai.api.key:}")
     private String openaiApiKey;
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -31,6 +31,11 @@ public class OpenAIClient implements LLMClient {
 
     @Override
     public String requestAnalysis(String prompt) {
+        System.out.println("🔍 OpenAIClient.requestAnalysis() 호출됨");
+        System.out.println("🔑 API 키 상태: " + (openaiApiKey == null ? "null" : 
+            (openaiApiKey.trim().isEmpty() ? "empty" : 
+                (openaiApiKey.startsWith("sk-") ? "valid format" : "invalid format"))));
+        
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(openaiApiKey);
@@ -46,18 +51,29 @@ public class OpenAIClient implements LLMClient {
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
+        try {
+            System.out.println("🌐 OpenAI API 호출 시작...");
         ResponseEntity<String> response = restTemplate.postForEntity(
                 "https://api.openai.com/v1/chat/completions",
                 request,
                 String.class
         );
+            System.out.println("✅ OpenAI API 호출 성공");
 
         // 전체 JSON 응답에서 content만 추출
         try {
             JsonNode root = objectMapper.readTree(response.getBody());
-            return root.at("/choices/0/message/content").asText();
+                String content = root.at("/choices/0/message/content").asText();
+                System.out.println("📝 추출된 응답: " + content);
+                return content;
+            } catch (Exception e) {
+                System.err.println("❌ OpenAI 응답 파싱 실패: " + e.getMessage());
+                throw new RuntimeException("OpenAI 응답 파싱 실패", e);
+            }
         } catch (Exception e) {
-            throw new RuntimeException("OpenAI 응답 파싱 실패", e);
+            System.err.println("❌ OpenAI API 호출 실패: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("OpenAI API 호출 실패", e);
         }
     }
 }

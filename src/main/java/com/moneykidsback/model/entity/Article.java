@@ -16,9 +16,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class Article {
     @Id
-    @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id; // 기사 ID
+    @Column(name = "id", nullable = false)
+    private Long id; // 기사 ID
 
     @Column(name = "stock_id")
     private String stockId; // 대상 주식 ID

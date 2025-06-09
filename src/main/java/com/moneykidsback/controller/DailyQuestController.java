@@ -1,19 +1,33 @@
 package com.moneykidsback.controller;
 
-import com.moneykidsback.model.entity.DailyQuest;
-import com.moneykidsback.model.entity.User;
-import com.moneykidsback.model.dto.request.DailyQuestProgressRequestDto;
-import com.moneykidsback.model.dto.response.DailyQuestProgressResponseDto;
-import com.moneykidsback.model.dto.response.DailyQuestResponseDto;
-import com.moneykidsback.repository.DailyQuestRepository;
-import com.moneykidsback.repository.UserRepository;
-import com.moneykidsback.service.DailyQuestService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.moneykidsback.model.dto.request.DailyQuestProgressRequestDto;
+import com.moneykidsback.model.dto.response.DailyQuestProgressResponseDto;
+import com.moneykidsback.model.dto.response.DailyQuestResponseDto;
+import com.moneykidsback.model.entity.DailyQuest;
+import com.moneykidsback.model.entity.User;
+import com.moneykidsback.repository.DailyQuestRepository;
+import com.moneykidsback.repository.UserRepository;
+import com.moneykidsback.service.DailyQuestService;
+
+import lombok.RequiredArgsConstructor;
+
+/**
+ * 🎯 일일 학습 목표/퀘스트 컨트롤러
+ * - 매일 자동 생성되는 학습 목표
+ * - 퀴즈, 거래, 학습 진행률 추적
+ * - 포인트 리워드 시스템
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/home")

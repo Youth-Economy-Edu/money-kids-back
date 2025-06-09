@@ -1,17 +1,33 @@
 package com.moneykidsback.controller;
 
-import com.moneykidsback.model.dto.request.TradeRequest;
-import com.moneykidsback.model.dto.response.*;
-import com.moneykidsback.service.TradeService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.moneykidsback.model.dto.request.TradeRequest;
+import com.moneykidsback.model.dto.response.BalanceResponse;
+import com.moneykidsback.model.dto.response.OrderDetailResponse;
+import com.moneykidsback.model.dto.response.TradeHistoryResponse;
+import com.moneykidsback.service.TradeService;
 
+import lombok.RequiredArgsConstructor;
+
+/**
+ * 💸 주식 거래 컨트롤러  
+ * - 주식 매수/매도 기능
+ * - 보유 주식 및 잔고 조회
+ * - 거래 내역 및 수익률 분석
+ * - 포트폴리오 관리
+ */
 @RestController
 @RequestMapping("/api/stocks/trade")
 @RequiredArgsConstructor

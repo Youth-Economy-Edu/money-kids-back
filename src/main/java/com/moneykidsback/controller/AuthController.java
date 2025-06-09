@@ -1,12 +1,22 @@
 package com.moneykidsback.controller;
 
-import com.moneykidsback.service.UserService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.moneykidsback.service.UserService;
+
+import lombok.RequiredArgsConstructor;
+
+/**
+ * 🔐 사용자 인증 컨트롤러
+ * - 일반 회원가입/로그인
+ * - OAuth2 소셜 로그인 (Google, Kakao) 지원
+ */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor

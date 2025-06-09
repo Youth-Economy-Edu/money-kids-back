@@ -13,6 +13,8 @@ import java.util.List;
 @Repository
 public interface StockLogRepository extends JpaRepository<StockLog, String> {
     List<StockLog> findByUser(User user);
+    
+    List<StockLog> findByUserId(String userId);
 
     // 매도 시점 이전의 매수 내역
     @Query("SELECT l FROM StockLog l WHERE l.user.id = :userId AND l.stock.id = :stockId AND l.date < :beforeDate AND l.quantity > 0")

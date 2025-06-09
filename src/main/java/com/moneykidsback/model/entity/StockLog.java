@@ -7,15 +7,13 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@Table(name = "STOCKLOG")
-@IdClass(StockLogId.class)
+@Table(name = "stock_log")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "STOCKLOG")
 public class StockLog {
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     private String id;
 
     @ManyToOne
@@ -31,4 +29,12 @@ public class StockLog {
 
     @Column(name = "quantity")
     private int quantity;
+
+    // 편의 생성자
+    public StockLog(String id, String userId, String stockId, String date, int quantity) {
+        this.id = id;
+        this.date = date;
+        this.quantity = quantity;
+        // user와 stock은 별도로 설정해야 함
+    }
 }

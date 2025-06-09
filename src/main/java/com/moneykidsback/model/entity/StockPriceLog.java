@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "STOCKPRICELOG")
+@Table(name = "stock_price_log")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -13,10 +13,8 @@ import lombok.*;
 public class StockPriceLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Integer id;
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String ID;
+    @Column(name = "id")
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "stock_id")
@@ -24,6 +22,7 @@ public class StockPriceLog {
 
     @Column(name = "volatility")
     private int volatility;
+    
     @Column(name = "price")
     private int price;
 

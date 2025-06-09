@@ -25,8 +25,10 @@ public class StockService {
     @Autowired
     OpenAiService openAiService;
 
-    public List<Stock> findByCode(String id) {
-        return stockRepository.findAllById(List.of(id));
+    public List<Stock> getAllStocks() {
+        return stockRepository.findAll();
+    }
+
     public List<Stock> findByCode(String id) {
         return stockRepository.findAllById(List.of(id));
     }
@@ -43,7 +45,6 @@ public class StockService {
         return stockRepository.save(stock);
     }
 
-    @Scheduled(fixedRate = 30000)
     public void updateStockPrices() {
 
         System.out.println(">>> [SCHEDULED] updateStockPrices() 실행 시각: "

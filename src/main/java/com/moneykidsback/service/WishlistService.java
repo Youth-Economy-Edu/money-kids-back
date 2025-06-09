@@ -2,7 +2,7 @@ package com.moneykidsback.service;
 
 import com.moneykidsback.model.dto.request.SaveWishlistDto;
 import com.moneykidsback.model.entity.Stock;
-import com.moneykidsback.model.entity.Users;
+import com.moneykidsback.model.entity.User;
 import com.moneykidsback.repository.StockRepository;
 import com.moneykidsback.repository.UserRepository;
 import com.moneykidsback.repository.WishlistRepository;
@@ -26,15 +26,15 @@ public class WishlistService {
 
     // 위시리스트에 주식 저장/삭제 (토글)
     public void saveWishlist(SaveWishlistDto saveWishlistDto) {
-        Users user = userRepository.findById(saveWishlistDto.getUserId())
+        User user = userRepository.findById(saveWishlistDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 userId의 사용자가 존재하지 않습니다."));
         Stock stock = stockRepository.findById(saveWishlistDto.getStockId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 stockId의 주식이 존재하지 않습니다."));
 
-        if (wishlistRepository.findByUserIdAndStockId(user.getID(), stock.getID()) != null) {
-            wishlistRepository.deleteByUserIdAndStockId(user.getID(), stock.getID());
+        if (wishlistRepository.findByUserIdAndStockId(user.getId(), stock.getId()) != null) {
+            wishlistRepository.deleteByUserIdAndStockId(user.getId(), stock.getId());
         } else {
-            wishlistRepository.insertWishlist(user.getID(), stock.getID());
+            wishlistRepository.insertWishlist(user.getId(), stock.getId());
         }
     }
 

@@ -7,7 +7,7 @@ import com.moneykidsback.model.entity.Stock;
 import com.moneykidsback.repository.ArticleRepository;
 import com.moneykidsback.repository.StockRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
+
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -47,8 +47,8 @@ public class NewsGenerateService {
                     articles.add(article);
                     Thread.sleep(2000); // 2초대기(API 호출 제한 방지)
                     break; // 성공 시 반복문 탈출
-                } catch (WebClientResponseException.TooManyRequests e) {
-                    System.out.println("429 에러. " + (retry + 1) + "번째 재시도, 1분 대기");
+                } catch (Exception e) {
+                    System.out.println("API 호출 에러. " + (retry + 1) + "번째 재시도, 1분 대기: " + e.getMessage());
                     Thread.sleep(60000); // 1분 대기
                 }
             }
@@ -82,19 +82,20 @@ public class NewsGenerateService {
 
     }
 
-    private void saveArticleToDb(String stock, NewsSaveDto article) {
+    private void saveArticleToDb(String stockId, NewsSaveDto article) {
         // 리포지토리의 저장 메소드
-        Article ArticleEntity = new Article();
+        Article articleEntity = new Article();
 
-        Stock stockEntity = stockRepository.findByID(stock);
+        Stock stockEntity = stockRepository.findById(stockId).orElse(null);
+        if (stockEntity != null) {
+            articleEntity.setStockId(stockEntity.getId());
+            articleEntity.setEffect(article.getEffect());
+            articleEntity.setTitle(article.getTitle());
+            articleEntity.setContent(article.getContent());
 
-        ArticleEntity.setStockId(stockEntity);
-        ArticleEntity.setEffect(article.getEffect());
-        ArticleEntity.setTitle(article.getTitle());
-        ArticleEntity.setContent(article.getContent());
-
-        articleRepository.save(ArticleEntity);
-        System.out.printf("%s번 기사 저장됨.", stockEntity);
+            articleRepository.save(articleEntity);
+            System.out.printf("%s번 기사 저장됨.", stockEntity.getId());
+        }
     }
 
 

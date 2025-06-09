@@ -18,7 +18,7 @@ public class Wishlist { //todo: 위시리스트 테이블이 필요함
     @ManyToOne
     @MapsId("userId")
     @JoinColumn(name = "user_id")
-    private Users userID;
+    private User user;
 
     @ManyToOne
     @MapsId("stockId")

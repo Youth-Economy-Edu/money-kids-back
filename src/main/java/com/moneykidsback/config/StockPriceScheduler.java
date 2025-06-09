@@ -10,9 +10,16 @@ import com.moneykidsback.service.StockService;
 public class StockPriceScheduler {
     private final StockService stockService;
 
-    // 10분마다 자동으로 주가 업데이트 실행(현재 30초)
-    @Scheduled(fixedRate = 30000)
-    public void autoUpdate() {
-        stockService.updateStockPrices(); // StockService에서 주가 랜덤 변동 로직 호출
+    // 기사 기반 주가 변동 시스템으로 대체하여 기존 30초 자동 업데이트 비활성화
+    // @Scheduled(fixedDelay = 30000)
+    // public void autoUpdate() {
+    //     stockService.updateStockPrices(); // StockService에서 주가 랜덤 변동 로직 호출
+    // }
+    
+    // 필요시 수동 테스트용으로 활성화 가능
+    // 수동 주가 업데이트 (테스트용)
+    public void manualUpdate() {
+        System.out.println("🔧 [MANUAL] 수동 주가 업데이트 실행");
+        stockService.updateStockPrices();
     }
 }
