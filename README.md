@@ -333,6 +333,6 @@ AI와 실시간 시뮬레이션이 결합된 **차세대 핀테크 교육 플랫
 
 ---
 
-**Made with ❤️ for the future economists**
+**Made by Moneykids_Team**
 
 </div> 
