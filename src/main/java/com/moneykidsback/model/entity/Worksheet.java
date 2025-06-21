@@ -1,27 +1,23 @@
 package com.moneykidsback.model.entity;
 
-
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 @Entity
 public class Worksheet {
     @Id
-    private Integer id; // 개념 고유 식별 아이디
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // ID 자동 생성 전략 추가
+    private Integer id;
 
     @Column(name = "difficulty")
-    private int difficulty; // 경제 개념 난이도 (1~5)
+    private int difficulty;
 
     @Column(name = "title", length = 255, nullable = false)
-    private String title; // 개념 제목 ex) 수요
+    private String title;
 
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
-    private String content; // 개념 설명 ex) 수요란 물건을 구입하고자...
+    private String content;
 }
-
-
