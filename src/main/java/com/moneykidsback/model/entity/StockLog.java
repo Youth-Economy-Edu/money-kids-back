@@ -3,6 +3,7 @@ package com.moneykidsback.model.entity;
 import com.moneykidsback.model.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -25,13 +26,13 @@ public class StockLog {
     private Stock stock;
 
     @Column(name = "date")
-    private String date;
+    private LocalDateTime date;
 
     @Column(name = "quantity")
     private int quantity;
 
     // 편의 생성자
-    public StockLog(String id, String userId, String stockId, String date, int quantity) {
+    public StockLog(String id, String userId, String stockId, LocalDateTime date, int quantity) {
         this.id = id;
         this.date = date;
         this.quantity = quantity;

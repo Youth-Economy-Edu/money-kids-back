@@ -13,17 +13,23 @@ import lombok.*;
 @Builder
 public class UserStock {
     
-    @EmbeddedId
-    private UserStockId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    private Long id;
+
+    @Column(name = "user_id")
+    private String userId;
+
+    @Column(name = "stock_id")
+    private String stockId;
 
     @ManyToOne
-    @MapsId("userId")
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
     @ManyToOne
-    @MapsId("stockId")
-    @JoinColumn(name = "stock_id")
+    @JoinColumn(name = "stock_id", insertable = false, updatable = false)
     private Stock stock;
 
     @Column(name = "quantity")
@@ -34,7 +40,8 @@ public class UserStock {
 
     // 편의 생성자
     public UserStock(String userId, String stockId, int quantity, int total) {
-        this.id = new UserStockId(userId, stockId);
+        this.userId = userId;
+        this.stockId = stockId;
         this.quantity = quantity;
         this.total = total;
     }

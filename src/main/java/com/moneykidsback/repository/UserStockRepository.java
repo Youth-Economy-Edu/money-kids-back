@@ -14,4 +14,5 @@ public interface UserStockRepository extends JpaRepository<UserStock, UserStockI
     Optional<UserStock> findByUserIdAndStockId(String userId, String stockId);
     List<UserStock> findAllByUserId(String userId);
     List<UserStock> findByUser(User user);
+    List<UserStock> findByUserAndQuantityGreaterThan(User user, int quantity);
 }

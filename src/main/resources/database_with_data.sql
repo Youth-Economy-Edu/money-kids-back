@@ -276,7 +276,7 @@ CREATE INDEX idx_article_sentiment ON article(sentiment);
 -- 기본 주식 데이터 삽입
 INSERT INTO stock (name, symbol, category, company_size, current_price, previous_price, price_change, price_change_percent, market_cap, volume, description) VALUES
 ('맥도날드', 'MCD', '외식업', 'LARGE', 58000.00, 57500.00, 500.00, 0.87, 1000000000, 0, '세계적인 패스트푸드 체인'),
-('레고 코리아', 'LEGO', '완구업', 'MEDIUM', 45000.00, 44800.00, 200.00, 0.45, 500000000, 0, '덴마크의 유명한 블록 장난감 회사'),
+('레고 코리아', 'LEGO', '완구업', 'MEDIUM',     45000.00, 44800.00, 200.00, 0.45, 500000000, 0, '덴마크의 유명한 블록 장난감 회사'),
 ('포켓몬카드', 'PKMN', '엔터테인먼트', 'MEDIUM', 32000.00, 31500.00, 500.00, 1.59, 300000000, 0, '포켓몬 트레이딩 카드 게임'),
 ('넥슨게임즈', 'NEXON', 'IT/게임', 'LARGE', 85000.00, 84200.00, 800.00, 0.95, 2000000000, 0, '한국의 대표적인 온라인 게임 회사'),
 ('오리온', 'ORION', '식품업', 'LARGE', 72000.00, 71800.00, 200.00, 0.28, 1500000000, 0, '초코파이로 유명한 식품 회사'),
@@ -286,4 +286,4 @@ INSERT INTO stock (name, symbol, category, company_size, current_price, previous
 ('삼성전자', 'SAMSUNG', 'IT/전자', 'LARGE', 68000.00, 67500.00, 500.00, 0.74, 10000000000, 0, '한국의 대표적인 전자 기업');
 
 SELECT 'Money Kids Back 데이터베이스가 데이터와 함께 성공적으로 생성되었습니다!' as status;
-SELECT '총 9개의 기본 주식이 등록되었습니다.' as stock_info; 
+SELECT '총 9개의 기본 주식이 등록되었습니다.' as stock_info;

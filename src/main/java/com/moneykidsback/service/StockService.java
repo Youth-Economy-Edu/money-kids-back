@@ -45,8 +45,21 @@ public class StockService {
         return stockRepository.save(stock);
     }
 
-    public void updateStockPrices() {
-
+    // ❌ 기존 방식: OpenAI 직접 주가 변동 (비활성화)
+    // 📰 새로운 방식: 기사 기반 주가 변동으로 전환됨
+    // - NewsGenerateService: 30분마다 기사 생성
+    // - NewsBasedPriceService: 10초마다 기사 기반 점진적 주가 변동
+    
+    // @Scheduled(fixedDelay = 10000) // 기존 10초 스케줄 비활성화
+    public void updateStockPrices_DISABLED() {
+        System.out.println("🔄 [INFO] 기존 OpenAI 직접 주가 변동 방식이 비활성화되었습니다.");
+        System.out.println("📰 새로운 기사 기반 주가 변동 시스템이 활성화되어 있습니다:");
+        System.out.println("   - NewsGenerateService: 30분마다 기사 자동 생성");
+        System.out.println("   - NewsBasedPriceService: 10초마다 기사 기반 점진적 주가 변동");
+        System.out.println("   - 수동 기사 생성: POST /api/articles/generate");
+        
+        /*
+        // === 기존 코드 (주석 처리) ===
         System.out.println(">>> [SCHEDULED] updateStockPrices() 실행 시각: "
         + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
@@ -58,7 +71,6 @@ public class StockService {
         }
         System.out.println("  → Stock 리스트에 담긴 ID 목록: " +
             stocks.stream().map(Stock::getId).toList());
-
 
         for (Stock stock : stocks) {
             int oldPrice = stock.getPrice();
@@ -88,7 +100,8 @@ public class StockService {
             StockPriceLog log = new StockPriceLog();
             log.setStock(stock);
             log.setVolatility(volatility);
-            log.setDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            log.setPrice(newPrice);
+            log.setDate(LocalDateTime.now());
             stockPriceLogRepository.save(log);
 
             // **여기서 반드시 보여주고 싶은 정보를 출력해 줍니다.**
@@ -97,6 +110,7 @@ public class StockService {
                 stock.getId(), oldPrice, newPrice, volatility
             ));
         }
+        */
     }
 
     private String generateLogId() {

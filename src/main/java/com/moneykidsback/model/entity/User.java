@@ -11,7 +11,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "`user`")  // user는 예약어이므로 백틱(`)으로 감싸주는 것이 안전합니다.
+@Table(name = "`user`")  // MySQL에서 user는 예약어이므로 백틱으로 감쌉니다
 public class User {
 
     @Id
@@ -29,4 +29,10 @@ public class User {
 
     @Column(name = "tendency", length = 100, nullable = true) // 길이 100, null 허용
     private String tendency;
+
+    @Column(name = "email", length = 255, nullable = true)
+    private String email;
+
+    @Column(name = "provider", length = 20, nullable = true) // GOOGLE, KAKAO, LOCAL
+    private String provider;
 }

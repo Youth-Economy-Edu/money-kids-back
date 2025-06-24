@@ -1,6 +1,7 @@
 package com.moneykidsback.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.moneykidsback.model.dto.request.TradeRequest;
@@ -36,49 +38,63 @@ public class TradeController {
 
     @PostMapping("/buy")
     public ResponseEntity<String> buyStock(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody TradeRequest request) {
+            @RequestBody TradeRequest request,
+            @RequestParam(value = "userId", required = false) String userId) {
 
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패: 로그인 필요");
+        // userId가 없으면 기본값 사용 (개발/테스트용)
+        if (userId == null || userId.isEmpty()) {
+            userId = "master";
         }
-
-        tradeService.buyStock(userDetails.getUsername(), request);
+        
+        tradeService.buyStock(userId, request);
         return ResponseEntity.ok("매수 완료");
     }
 
-
-
-
     @PostMapping("/sell")
-    public ResponseEntity<?> sellStock(@RequestBody TradeRequest request,
-                                      @AuthenticationPrincipal UserDetails userDetails) {
-        tradeService.sellStock(userDetails.getUsername(), request);
+    public ResponseEntity<?> sellStock(
+            @RequestBody TradeRequest request,
+            @RequestParam(value = "userId", required = false) String userId) {
+        
+        // userId가 없으면 기본값 사용 (개발/테스트용)
+        if (userId == null || userId.isEmpty()) {
+            userId = "master";
+        }
+        
+        tradeService.sellStock(userId, request);
         return ResponseEntity.ok().body("매도 완료");
     }
 
-
     @GetMapping("/balance")
-    public ResponseEntity<BalanceResponse> getBalance(@AuthenticationPrincipal UserDetails userDetails) {
-        BalanceResponse balance = tradeService.getBalance(userDetails.getUsername());
+    public ResponseEntity<BalanceResponse> getBalance(
+            @RequestParam(value = "userId", defaultValue = "master") String userId) {
+        BalanceResponse balance = tradeService.getBalance(userId);
         return ResponseEntity.ok(balance);
     }
 
+    @GetMapping("/portfolio")
+    public ResponseEntity<Map<String, Object>> getPortfolio(
+            @RequestParam(value = "userId", defaultValue = "master") String userId) {
+        Map<String, Object> portfolio = tradeService.getPortfolio(userId);
+        return ResponseEntity.ok(portfolio);
+    }
 
     @GetMapping("/order/{stockId}")
-    public ResponseEntity<OrderDetailResponse> getOrderDetail(@AuthenticationPrincipal UserDetails userDetails,
-                                                              @PathVariable String stockId) {
-        return ResponseEntity.ok(tradeService.getOrderDetail(userDetails.getUsername(), stockId));
+    public ResponseEntity<OrderDetailResponse> getOrderDetail(
+            @PathVariable String stockId,
+            @RequestParam(value = "userId", defaultValue = "master") String userId) {
+        return ResponseEntity.ok(tradeService.getOrderDetail(userId, stockId));
     }
 
     @GetMapping("/history")
-    public ResponseEntity<List<TradeHistoryResponse>> getAllTradeHistory(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(tradeService.getAllTradeHistory(userDetails.getUsername()));
+    public ResponseEntity<List<TradeHistoryResponse>> getAllTradeHistory(
+            @RequestParam(value = "userId", defaultValue = "master") String userId) {
+        return ResponseEntity.ok(tradeService.getAllTradeHistory(userId));
     }
 
     @GetMapping("/history/{type}")
-    public ResponseEntity<List<TradeHistoryResponse>> getTradeHistoryByType(@AuthenticationPrincipal UserDetails userDetails,
-                                                                            @PathVariable String type) {
-        return ResponseEntity.ok(tradeService.getTradeHistoryByType(userDetails.getUsername(), type));
+    public ResponseEntity<List<TradeHistoryResponse>> getTradeHistoryByType(
+            @PathVariable String type,
+            @RequestParam(value = "userId", defaultValue = "master") String userId) {
+        return ResponseEntity.ok(tradeService.getTradeHistoryByType(userId, type));
     }
 }

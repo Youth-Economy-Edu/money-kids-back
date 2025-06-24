@@ -15,7 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void registerUser(String id, String name, String password) {
+    public User registerUser(String id, String name, String password) {
         if (userRepository.existsById(id)) {
             throw new IllegalArgumentException("이미 존재하는 ID입니다.");
         }
@@ -25,17 +25,19 @@ public class UserService {
                 .password(password) // TODO: 비밀번호 암호화 필수!
                 .points(0)
                 .build();
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
-    public void login(String id, String password) {
+    public User login(String id, String password) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
 
         if (!user.getPassword().equals(password)) { // TODO: 암호화된 비밀번호 비교 필수!
             throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
         }
+        
+        return user;
     }
 
     // -- 아래는 소셜 로그인과 기타 기능에 필요한 메서드 --

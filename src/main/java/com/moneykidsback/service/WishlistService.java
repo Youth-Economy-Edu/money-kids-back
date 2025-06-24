@@ -45,7 +45,7 @@ public class WishlistService {
         }
         List<Stock> wishlist = wishlistRepository.findStocksByUserId(userId);
         if (wishlist == null || wishlist.isEmpty()) {
-            throw new java.util.NoSuchElementException("해당 userId의 위시리스트가 존재하지 않습니다.");
+            return List.of(); // 빈 리스트 반환
         }
         return wishlist;
     }

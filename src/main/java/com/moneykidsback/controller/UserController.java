@@ -2,10 +2,12 @@ package com.moneykidsback.controller;
 
 import com.moneykidsback.model.entity.User;
 import com.moneykidsback.service.UserService;
+import com.moneykidsback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -14,6 +16,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
     // 사용자 정보 조회 (포인트 포함)
     @GetMapping("/{userId}")
@@ -22,22 +25,15 @@ public class UserController {
             User user = userService.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
             
-            return ResponseEntity.ok(Map.of(
-                "code", 200,
-                "data", Map.of(
-                    "id", user.getId(),
-                    "name", user.getName(),
-                    "points", user.getPoints(),
-                    "tendency", user.getTendency()
-                ),
-                "msg", "사용자 정보 조회 성공"
-            ));
+            // User 객체를 직접 반환하도록 수정
+            return ResponseEntity.ok(user);
+            
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of(
-                "code", 500,
-                "data", null,
-                "msg", "사용자 조회 실패: " + e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("code", 500);
+            errorResponse.put("data", null);
+            errorResponse.put("msg", "사용자 조회 실패: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
         }
     }
 
@@ -48,20 +44,56 @@ public class UserController {
             User user = userService.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
             
-            return ResponseEntity.ok(Map.of(
-                "code", 200,
-                "data", Map.of(
-                    "userId", user.getId(),
-                    "points", user.getPoints()
-                ),
-                "msg", "포인트 조회 성공"
-            ));
+            Map<String, Object> pointsData = new HashMap<>();
+            pointsData.put("userId", user.getId());
+            pointsData.put("points", user.getPoints());
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 200);
+            response.put("data", pointsData);
+            response.put("msg", "포인트 조회 성공");
+            
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of(
-                "code", 500,
-                "data", null,
-                "msg", "포인트 조회 실패: " + e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("code", 500);
+            errorResponse.put("data", null);
+            errorResponse.put("msg", "포인트 조회 실패: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
+
+    // 사용자 포인트 업데이트 (개발/테스트용)
+    @PutMapping("/{userId}/points")
+    public ResponseEntity<?> updateUserPoints(@PathVariable String userId, @RequestBody Map<String, Object> request) {
+        try {
+            User user = userService.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+            
+            Integer newPoints = (Integer) request.get("points");
+            if (newPoints == null) {
+                throw new RuntimeException("포인트 값이 필요합니다.");
+            }
+            
+            user.setPoints(newPoints);
+            userRepository.save(user);
+            
+            Map<String, Object> pointsData = new HashMap<>();
+            pointsData.put("userId", user.getId());
+            pointsData.put("points", user.getPoints());
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 200);
+            response.put("data", pointsData);
+            response.put("msg", "포인트 업데이트 성공");
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("code", 500);
+            errorResponse.put("data", null);
+            errorResponse.put("msg", "포인트 업데이트 실패: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
         }
     }
 } 

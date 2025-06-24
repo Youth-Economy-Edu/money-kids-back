@@ -1,126 +1,272 @@
 package com.moneykidsback.service;
 
-import com.moneykidsback.model.dto.request.NewsSaveDto;
-import com.moneykidsback.model.dto.request.RateForAiNewsDto;
 import com.moneykidsback.model.entity.Article;
 import com.moneykidsback.model.entity.Stock;
 import com.moneykidsback.repository.ArticleRepository;
 import com.moneykidsback.repository.StockRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class NewsGenerateService {
 
-    private final OpenAiService openAiService;
-    private final StockRepository stockRepository;
-    private final ArticleRepository articleRepository;
+    @Autowired
+    private StockRepository stockRepository;
 
-    public NewsGenerateService(OpenAiService openAiService, StockRepository stockRepository, ArticleRepository articleRepository) {
-        this.openAiService = openAiService;
-        this.stockRepository = stockRepository;
-        this.articleRepository = articleRepository;
+    @Autowired
+    private ArticleRepository articleRepository;
+
+    @Autowired
+    private OpenAiService openAiService;
+
+    @Autowired
+    private NewsBasedPriceService newsBasedPriceService;
+
+    private final Random random = new Random();
+
+    // 1시간마다 기사 생성 (API 토큰 절약)
+    @Scheduled(fixedDelay = 3600000) // 1시간 = 3600000ms
+    public void scheduledNewsGeneration() {
+        System.out.println("📰 [SCHEDULED] 정기 기사 생성 시작: " + LocalDateTime.now());
+        generateAndSaveNewsForAllStocks();
     }
 
-    // 주식별 경제기사 생성
-    public List<String> generateAndSaveNewsForAllStocks() throws InterruptedException {
-        List<RateForAiNewsDto> stocks = stockRepository.findChangeRateForAiNews();
-        List<String> articles = new ArrayList<>();
-        int maxRetry = 5;
+    public List<String> generateAndSaveNewsForAllStocks() {
+        List<Stock> stocks = stockRepository.findAll();
+        List<String> generatedArticles = new ArrayList<>();
 
-        for (RateForAiNewsDto stock : stocks) {
-            String stockID = stock.getCode(); // 주식 ID
-            String prompt = makePromptForStock(stock);
-            String article = null;
-
-            for (int retry = 0; retry < maxRetry; retry++) {
-                try {
-                    article = openAiService.getChatCompletionSync(prompt);
-                    // 기사 파싱 (ex: [호재], 제목, 본문)
-                    NewsSaveDto parsedArticle = parse(article);
-                    // DB에 저장
-                    saveArticleToDb(stockID, parsedArticle);
-                    articles.add(article);
-                    Thread.sleep(2000); // 2초대기(API 호출 제한 방지)
-                    break; // 성공 시 반복문 탈출
-                } catch (Exception e) {
-                    System.out.println("API 호출 에러. " + (retry + 1) + "번째 재시도, 1분 대기: " + e.getMessage());
-                    Thread.sleep(60000); // 1분 대기
+        for (Stock stock : stocks) {
+            try {
+                // 30% 확률로 기사 생성 (API 토큰 절약)
+                if (random.nextDouble() < 0.3) {
+                    String articleContent = generateNewsArticle(stock);
+                    
+                    if (articleContent != null && !articleContent.trim().isEmpty()) {
+                        Article article = saveArticle(stock, articleContent);
+                        generatedArticles.add(stock.getName() + ": " + article.getTitle());
+                        
+                        // 기사 기반 주가 변동 시작
+                        newsBasedPriceService.startPriceMovementForArticle(article);
+                        
+                        System.out.println("📰 새 기사 생성 완료: " + stock.getName() + " - " + article.getTitle());
+                    }
                 }
-            }
-
-            // 만약 maxRetry 만큼 실패했으면 로그로 남기거나, 실패 데이터 따로 관리해도 됨!
-            if (article == null) {
-                System.out.println("기사 생성 실패(최대 재시도 도달): " + stock.getName());
+            } catch (Exception e) {
+                System.err.println("❌ " + stock.getName() + " 기사 생성 실패: " + e.getMessage());
             }
         }
-        return articles;
+
+        System.out.println("📰 총 " + generatedArticles.size() + "개 기사 생성 완료");
+        return generatedArticles;
     }
 
+    private String generateNewsArticle(Stock stock) {
+        try {
+            // OpenAI 프롬프트 생성 - 더 자연스러운 기업 뉴스 요청
+            String prompt = String.format(
+                "다음 기업에 대한 자연스러운 기업 뉴스를 작성해주세요.\n\n" +
+                "기업명: %s\n\n" +
+                "요구사항:\n" +
+                "1. 실제 기업 뉴스처럼 자연스럽게 작성 (주식, 주가, 투자자 등 직접적 표현 금지)\n" +
+                "2. 기업의 사업 활동, 신제품, 서비스 개선, 사회공헌 등에 초점\n" +
+                "3. 긍정적, 부정적, 중립적 내용 중 하나를 선택\n" +
+                "4. 제목과 내용을 구분해서 작성\n" +
+                "5. 첫 줄에 감정(긍정:/부정:/중립:)과 영향도(강함/보통/약함)를 표시\n" +
+                "6. 제목은 50자 이내, 내용은 200자 내외\n" +
+                "7. 업종별 특성 반영 (식품업체-신메뉴/위생, 게임업체-신작/업데이트, 소매업체-매장/서비스 등)\n\n" +
+                "형식:\n" +
+                "감정:영향도\n" +
+                "제목: [제목 내용]\n" +
+                "내용: [기사 내용]",
+                stock.getName()
+            );
 
-    // 프롬프트 만드는 함수 (ex: 악재/호재 자동 분기)
-    private String makePromptForStock(RateForAiNewsDto stock) {
-        return String.format(
-                "%s 회사(종목: %s, 변동률: %s%%)에 대해 경제·기술 뉴스 기사를 200자 내외로 써줘.\n" +
-                        "- 기사 첫 줄은 '[호재/악재/중립] 제목' 형식.\n" +
-                        "- 본문은 초등학생도 이해할 수 있는 쉬운 말로, 편향·감정 없이 작성.\n" +
-                        "- **변동률 의 크기에 따라 더 심각한 이슈**를 다뤄줘.\n" +
-                        "- 반드시 매번 **완전히 새로운 주제**와 **관점**으로, 실제로 있을 법한 최신 뉴스처럼 써.\n" +
-                        "- 이전 기사에서 다뤘던 이슈/단어/표현/예시는 절대 반복하지 마.\n" +
-                        "- 예시: 신제품 출시, 해외진출, 관세부과, CEO 교체, 신기술 도입, 사회공헌, 환경정책, 경쟁사 동향 등 실존/가상 소재를 매번 다르게 섞어 써.\n" +
-                        "- 이번 기사에만 등장하는 상징적 사건·숫자·배경·비유도 추가해.\n" +
-                        "- 매번 기사 소재를 랜덤하게 골라서, 이전 기사들과 한 번도 겹치지 않게 작성해." +
-                        "- 주가에 대한 언급은 절대 금지. 주식 시장에 영향을 줄 수 있는 회사의 최근 소식에 집중해줘.\n",
-                stock.getName(),
-                stock.getCategory(),
-                stock.getChangeRate()
-        );
-
-    }
-
-    private void saveArticleToDb(String stockId, NewsSaveDto article) {
-        // 리포지토리의 저장 메소드
-        Article articleEntity = new Article();
-
-        Stock stockEntity = stockRepository.findById(stockId).orElse(null);
-        if (stockEntity != null) {
-            articleEntity.setStockId(stockEntity.getId());
-            articleEntity.setEffect(article.getEffect());
-            articleEntity.setTitle(article.getTitle());
-            articleEntity.setContent(article.getContent());
-
-            articleRepository.save(articleEntity);
-            System.out.printf("%s번 기사 저장됨.", stockEntity.getId());
+            return openAiService.generateNewsArticle(prompt);
+        } catch (Exception e) {
+            System.err.println("OpenAI 기사 생성 실패: " + e.getMessage());
+            return generateFallbackArticle(stock);
         }
     }
 
+    // OpenAI 실패 시 대체 기사 생성 - 더 자연스러운 템플릿으로 개선
+    private String generateFallbackArticle(Stock stock) {
+        String[] sentiments = {"긍정", "부정", "중립"};
+        String[] impacts = {"강함", "보통", "약함"};
+        
+        // 기업별 맞춤형 뉴스 템플릿
+        String[] templates = getNewsTemplatesByCompany(stock.getName());
+        String[] contentTemplates = getContentTemplatesByCompany(stock.getName());
 
-    // 기사 파싱 함수 (ex: [호재], 제목, 본문)
-    public static NewsSaveDto parse(String articles) {
-        String[] lines = articles.split("\\r?\\n", 2); // 개행 기준으로 두 덩이만 나눔
-        String firstLine = lines.length > 0 ? lines[0] : "";
-        String content = lines.length > 1 ? lines[1].trim() : "";
+        String sentiment = sentiments[random.nextInt(sentiments.length)];
+        String impact = impacts[random.nextInt(impacts.length)];
+        String title = String.format(templates[random.nextInt(templates.length)], stock.getName());
+        String content = String.format(contentTemplates[random.nextInt(contentTemplates.length)], stock.getName());
 
-        // 영향과 제목 분리
-        // 실제로는 DB에서 주식 ID를 조회해야 함. 여기서는 예시로 0으로 설정.
-        String effect = "";
-        String title = firstLine;
-
-        if (firstLine.startsWith("[")) {
-            int closeIdx = firstLine.indexOf("]");
-            if (closeIdx != -1) {
-                effect = firstLine.substring(1, closeIdx); // [] 사이
-                title = firstLine.substring(closeIdx + 1).trim(); // 뒤의 제목
-            }
+        return String.format("%s:%s\n제목: %s\n내용: %s", sentiment, impact, title, content);
+    }
+    
+    // 기업별 맞춤형 뉴스 제목 템플릿
+    private String[] getNewsTemplatesByCompany(String companyName) {
+        if (companyName.contains("레고")) {
+            return new String[]{
+                "%s, 새로운 테마 세트 출시 예정",
+                "%s, 창의력 교육 프로그램 확대",
+                "%s, 친환경 소재 개발 노력",
+                "%s, 글로벌 전시회 참가 소식",
+                "%s, 디지털 체험 공간 오픈"
+            };
+        } else if (companyName.contains("포켓몬")) {
+            return new String[]{
+                "%s, 신규 카드 시리즈 발표",
+                "%s, 수집가를 위한 특별판 출시",
+                "%s, 게임과 연동된 새로운 체험",
+                "%s, 팬 커뮤니티 이벤트 개최",
+                "%s, 어린이 교육 콘텐츠 제작"
+            };
+        } else if (companyName.contains("맥도날드")) {
+            return new String[]{
+                "%s, 신메뉴 버거 시리즈 출시",
+                "%s, 매장 리뉴얼 프로젝트 진행",
+                "%s, 건강한 식단 옵션 확대",
+                "%s, 지역 농산물 활용 확대",
+                "%s, 디지털 주문 시스템 개선"
+            };
+        } else if (companyName.contains("스타벅스")) {
+            return new String[]{
+                "%s, 시즌 한정 음료 출시",
+                "%s, 친환경 매장 운영 확대",
+                "%s, 바리스타 교육 프로그램 강화",
+                "%s, 지역 특화 메뉴 개발",
+                "%s, 고객 경험 개선 서비스 도입"
+            };
+        } else if (companyName.contains("농심") || companyName.contains("오리온")) {
+            return new String[]{
+                "%s, 건강 지향 신제품 라인업 공개",
+                "%s, 해외 시장 진출 확대",
+                "%s, 품질 관리 시스템 업그레이드",
+                "%s, 지속가능한 포장재 도입",
+                "%s, 소비자 취향 분석 연구 발표"
+            };
+        } else if (companyName.contains("넥슨")) {
+            return new String[]{
+                "%s, 신작 모바일 게임 개발 발표",
+                "%s, 게임 업데이트 및 이벤트 공개",
+                "%s, e스포츠 대회 후원 확대",
+                "%s, 게임 개발자 육성 프로그램 론칭",
+                "%s, 글로벌 게임 퍼블리싱 강화"
+            };
+        } else {
+            return new String[]{
+                "%s, 고객 서비스 품질 향상 계획",
+                "%s, 디지털 혁신 프로젝트 시작",
+                "%s, 사회공헌 활동 확대 발표",
+                "%s, 새로운 브랜드 전략 공개",
+                "%s, 운영 효율성 개선 추진"
+            };
         }
-        return new NewsSaveDto( // 주식 ID로 Stock 객체 생성
-                effect, // 영향
-                title, // 제목
-                content // 본문
-        );
+    }
+    
+    // 기업별 맞춤형 뉴스 내용 템플릿
+    private String[] getContentTemplatesByCompany(String companyName) {
+        if (companyName.contains("레고")) {
+            return new String[]{
+                "%s가 창의적인 놀이 문화 확산을 위한 새로운 시도를 하고 있다. 어린이들의 상상력 발달에 도움이 되는 혁신적인 제품으로 주목받고 있다.",
+                "%s가 교육적 가치를 높인 제품 개발에 집중하고 있다. 놀이를 통한 학습 효과를 극대화하는 방향으로 사업을 확장하고 있다."
+            };
+        } else if (companyName.contains("맥도날드")) {
+            return new String[]{
+                "%s가 고객 만족도 향상을 위한 메뉴 다양화에 나서고 있다. 건강하고 맛있는 옵션을 늘려 더 많은 고객층의 니즈를 충족시키고자 한다.",
+                "%s가 매장 환경 개선과 서비스 품질 향상에 투자하고 있다. 고객들이 더욱 편안하게 이용할 수 있는 공간 조성에 집중하고 있다."
+            };
+        } else if (companyName.contains("농심") || companyName.contains("오리온")) {
+            return new String[]{
+                "%s가 소비자 건강을 고려한 제품 개발에 힘쓰고 있다. 맛과 영양을 동시에 만족시키는 혁신적인 제품으로 시장에서 긍정적인 반응을 얻고 있다.",
+                "%s가 지속가능한 경영을 위한 환경친화적 생산 방식을 도입하고 있다. 이를 통해 사회적 책임을 다하며 브랜드 가치를 높여가고 있다."
+            };
+        } else if (companyName.contains("넥슨")) {
+            return new String[]{
+                "%s가 게임 산업의 새로운 트렌드를 선도하는 콘텐츠를 선보이고 있다. 혁신적인 게임플레이와 스토리텔링으로 사용자들의 큰 관심을 받고 있다.",
+                "%s가 글로벌 게임 시장에서의 경쟁력 강화를 위한 다양한 전략을 추진하고 있다. 최신 기술을 활용한 게임 개발로 시장 점유율 확대를 노리고 있다."
+            };
+        } else {
+            return new String[]{
+                "%s가 고객 중심의 서비스 개선에 지속적으로 노력하고 있다. 시장 변화에 발빠르게 대응하며 경쟁력을 유지하고 있다.",
+                "%s가 혁신적인 기술 도입을 통해 업무 효율성을 높이고 있다. 이를 통해 더 나은 서비스를 제공하고자 하는 의지를 보여주고 있다."
+            };
+        }
+    }
+
+    private Article saveArticle(Stock stock, String articleContent) {
+        // 기사 내용 파싱
+        String[] lines = articleContent.split("\n");
+        String sentimentAndImpact = lines[0];
+        String title = lines[1].replace("제목: ", "");
+        String content = lines[2].replace("내용: ", "");
+
+        // 감정과 영향도 분석
+        String[] parts = sentimentAndImpact.split(":");
+        String sentiment = parts[0];
+        String impact = parts.length > 1 ? parts[1] : "보통";
+
+        // 목표 등락률 계산 (±3% 제한)
+        double targetChangeRate = calculateTargetChangeRate(sentiment, impact);
+
+        Article article = new Article();
+        // ID는 자동생성되므로 설정하지 않음
+        article.setStockId(stock.getId());
+        article.setTitle(title);
+        article.setContent(content);
+        article.setEffect(String.valueOf(targetChangeRate));
+        article.setDate(LocalDateTime.now().toString());
+        article.setSentiment(sentiment);
+        article.setImpact(impact);
+
+        Article savedArticle = articleRepository.save(article);
+        System.out.println("✅ " + stock.getName() + " 기사 저장 완료: " + title);
+        return savedArticle;
+    }
+
+    private double calculateTargetChangeRate(String sentiment, String impact) {
+        double baseRate = 0;
+        
+        // 감정에 따른 기본 등락률 (소폭 변동)
+        switch (sentiment) {
+            case "긍정":
+                baseRate = 1.5; // +1.5%
+                break;
+            case "부정":
+                baseRate = -1.5; // -1.5%
+                break;
+            case "중립":
+                baseRate = 0.0; // 0%
+                break;
+            default:
+                baseRate = random.nextGaussian() * 0.5; // 랜덤 ±0.5%
+        }
+
+        // 영향도에 따른 배율 조정 (더 보수적으로)
+        double multiplier = 1.0;
+        switch (impact) {
+            case "강함":
+                multiplier = 2.0; // 2배
+                break;
+            case "보통":
+                multiplier = 1.0; // 1배
+                break;
+            case "약함":
+                multiplier = 0.5; // 0.5배
+                break;
+        }
+
+        double targetRate = baseRate * multiplier;
+        
+        // 최대 ±3% 제한
+        return Math.max(-3.0, Math.min(3.0, targetRate));
     }
 }

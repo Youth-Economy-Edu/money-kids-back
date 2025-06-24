@@ -24,7 +24,7 @@ public class ActivityLog {
     private String activityType;
 
     @Column(name = "user_quiz_id")
-    private Integer userQuizId;
+    private Long userQuizId;
 
     @Column(name = "quiz_level")
     private String quizLevel;
@@ -42,7 +42,7 @@ public class ActivityLog {
     private String stockCategory;
 
     @Column(name = "completion_id")
-    private Integer completionId;
+    private Long completionId;
 
     @Column(name = "worksheet_difficulty")
     private String worksheetDifficulty;

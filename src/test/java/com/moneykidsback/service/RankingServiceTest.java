@@ -37,7 +37,7 @@ public class RankingServiceTest {
             stock.setName("테스트 스톡" + i);
             stock.setPrice(1000 * i);
             stock.setCategory("Tech");
-            stock.setUpdatedAt(LocalDateTime.now());
+            stock.setUpdateAt(LocalDateTime.now());
             stockRepository.save(stock);
         }
 
@@ -59,7 +59,7 @@ public class RankingServiceTest {
             stock.setName("테스트 스톡 1-" + i);
             stock.setPrice(1000 * i);
             stock.setCategory("Tech");
-            stock.setUpdatedAt(LocalDateTime.now());
+            stock.setUpdateAt(LocalDateTime.now());
             stockRepository.save(stock);
         }
         for (int i = 1; i <= 5; i++) {
@@ -68,14 +68,14 @@ public class RankingServiceTest {
             stock2.setName("테스트 스톡 1-" + i);
             stock2.setPrice(1000 * i);
             stock2.setCategory("Defense");
-            stock2.setUpdatedAt(LocalDateTime.now());
+            stock2.setUpdateAt(LocalDateTime.now());
             stockRepository.save(stock2);
         }
 
         //Defense 카테고리 검색
         List<Stock> categoryRankedStocks = stockRepository.findAllByCategoryOrderByPriceDesc("Defense");
         for (Stock stock : categoryRankedStocks) {
-            System.out.println(stock.getCode() + " | " + stock.getName() + " | " + stock.getPrice() + " | " + stock.getCategory()  + " | " + stock.getUpdatedAt());
+            System.out.println(stock.getCode() + " | " + stock.getName() + " | " + stock.getPrice() + " | " + stock.getCategory()  + " | " + stock.getUpdateAt());
         }
     }
 
@@ -89,7 +89,7 @@ public class RankingServiceTest {
             stockOld.setPrice(1000); // 과거 가격
             stockOld.setBeforePrice(1000); // 최초 등록이므로 beforePrice도 동일
             stockOld.setCategory("Tech");
-            stockOld.setUpdatedAt(LocalDateTime.now().minusDays(1));
+            stockOld.setUpdateAt(LocalDateTime.now().minusDays(1));
             stockRepository.save(stockOld);
 
             // 최신 데이터(현재 시점)
@@ -99,7 +99,7 @@ public class RankingServiceTest {
             stockNew.setPrice(1200); // 현재 가격
             stockNew.setBeforePrice(1000); // 과거 가격
             stockNew.setCategory("Tech");
-            stockNew.setUpdatedAt(LocalDateTime.now());
+            stockNew.setUpdateAt(LocalDateTime.now());
             stockRepository.save(stockNew);
 
             // 이전 데이터(과거 시점)
@@ -109,7 +109,7 @@ public class RankingServiceTest {
             stockOld2.setPrice(1000); // 과거 가격
             stockOld2.setBeforePrice(1000); // 최초 등록이므로 beforePrice도 동일
             stockOld2.setCategory("Tech");
-            stockOld2.setUpdatedAt(LocalDateTime.now().minusDays(1));
+            stockOld2.setUpdateAt(LocalDateTime.now().minusDays(1));
             stockRepository.save(stockOld2);
 
             // 최신 데이터(현재 시점)
@@ -119,7 +119,7 @@ public class RankingServiceTest {
             stockNew2.setPrice(9000); // 현재 가격
             stockNew2.setBeforePrice(1000); // 과거 가격
             stockNew2.setCategory("Tech");
-            stockNew2.setUpdatedAt(LocalDateTime.now());
+            stockNew2.setUpdateAt(LocalDateTime.now());
             stockRepository.save(stockNew2);
 
         // 변동률 기준 순위 조회

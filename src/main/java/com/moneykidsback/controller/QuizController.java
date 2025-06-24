@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,7 +64,8 @@ public class QuizController {
                     "correct", dto.getCorrect(),
                     "points", dto.getCorrect() ? dto.getPoints() : 0,
                     "message", dto.getCorrect() ? "정답입니다! 포인트를 획득했습니다." : "오답입니다. 다시 도전해보세요!"
-                ),
+
+         ),
                 "msg", "퀴즈 제출이 완료되었습니다."
             ));
         } catch (Exception e) {
@@ -114,5 +116,49 @@ public class QuizController {
             ));
         }
     }
+    
+    // 퀴즈 세션 완료 (포인트 지급 및 24시간 제한)
+    @PostMapping("/session/complete")
+    public ResponseEntity<?> completeQuizSession(@RequestBody Map<String, Object> request) {
+        try {
+            String userId = (String) request.get("userId");
+            Integer quizLevel = (Integer) request.get("quizLevel");
+            Integer totalQuestions = (Integer) request.get("totalQuestions");
+            Integer correctAnswers = (Integer) request.get("correctAnswers");
+            
+            Map<String, Object> result = quizService.completeQuizSession(userId, quizLevel, totalQuestions, correctAnswers);
+            
+            return ResponseEntity.ok(Map.of(
+                "code", 200,
+                "data", result,
+                "msg", "퀴즈 세션 완료"
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                "code", 500,
+                "data", null,
+                "msg", "퀴즈 세션 완료 실패: " + e.getMessage()
+            ));
+        }
+    }
+    
+    // 사용자 퀴즈 진행 현황 조회
+    @GetMapping("/user/{userId}/progress")
+    public ResponseEntity<?> getUserQuizProgress(@PathVariable String userId) {
+        try {
+            Map<String, Object> progress = quizService.getUserQuizProgress(userId);
+            
+            return ResponseEntity.ok(Map.of(
+                "code", 200,
+                "data", progress,
+                "msg", "퀴즈 진행 현황 조회 성공"
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                "code", 500,
+                "data", null,
+                "msg", "퀴즈 진행 현황 조회 실패: " + e.getMessage()
+            ));
+        }
+    }
 }
-

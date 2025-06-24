@@ -15,4 +15,8 @@ public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> 
     
     // 학부모 페이지용 추가 메서드
     List<ActivityLog> findByUserIdAndCreatedAtAfterOrderByCreatedAtDesc(String userId, LocalDateTime after);
+    
+    // ActivityLogController용 추가 메서드
+    List<ActivityLog> findByUserIdOrderByCreatedAtDesc(String userId);
+    List<ActivityLog> findAllByOrderByCreatedAtDesc();
 }

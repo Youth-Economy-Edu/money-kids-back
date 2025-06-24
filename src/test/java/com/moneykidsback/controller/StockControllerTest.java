@@ -90,7 +90,7 @@ class StockControllerTest {
         stockOld.setPrice(1000);
         stockOld.setBeforePrice(1000);
         stockOld.setCategory("Tech");
-        stockOld.setUpdatedAt(LocalDateTime.now().minusDays(1));
+        stockOld.setUpdateAt(LocalDateTime.now().minusDays(1));
 
         Stock stockNew = new Stock();
         stockNew.setCode("CODE1");
@@ -98,7 +98,7 @@ class StockControllerTest {
         stockNew.setPrice(1200);
         stockNew.setBeforePrice(1000);
         stockNew.setCategory("Tech");
-        stockNew.setUpdatedAt(LocalDateTime.now());
+        stockNew.setUpdateAt(LocalDateTime.now());
 
         Stock stockOld2 = new Stock();
         stockOld2.setCode("CODE2");
@@ -106,7 +106,7 @@ class StockControllerTest {
         stockOld2.setPrice(1000);
         stockOld2.setBeforePrice(1000);
         stockOld2.setCategory("Tech");
-        stockOld2.setUpdatedAt(LocalDateTime.now().minusDays(1));
+        stockOld2.setUpdateAt(LocalDateTime.now().minusDays(1));
 
         Stock stockNew2 = new Stock();
         stockNew2.setCode("CODE2");
@@ -114,7 +114,7 @@ class StockControllerTest {
         stockNew2.setPrice(9000);
         stockNew2.setBeforePrice(1000);
         stockNew2.setCategory("Tech");
-        stockNew2.setUpdatedAt(LocalDateTime.now());
+        stockNew2.setUpdateAt(LocalDateTime.now());
 
         // 변동률 계산
         double changeRate1 = ((double) (stockNew.getPrice() - stockOld.getBeforePrice()) / stockOld.getBeforePrice()) * 100;
@@ -124,9 +124,9 @@ class StockControllerTest {
         when(rankingService.getStocksOrderedByChangeRateDesc()).thenReturn(
                 Arrays.asList(
                         new StockChangeRateDto(stockNew2.getCode(), stockNew2.getName(), stockNew2.getPrice(),
-                                stockNew2.getCategory(), stockNew2.getUpdatedAt(), changeRate2),
+                                stockNew2.getCategory(), stockNew2.getUpdateAt(), changeRate2),
                         new StockChangeRateDto(stockNew.getCode(), stockNew.getName(), stockNew.getPrice(),
-                                stockNew.getCategory(), stockNew.getUpdatedAt(), changeRate1)
+                                stockNew.getCategory(), stockNew.getUpdateAt(), changeRate1)
                 )
         );
 

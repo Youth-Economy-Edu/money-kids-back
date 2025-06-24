@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -21,19 +22,89 @@ public class ArticleService {
     @Autowired
     private NewsBasedPriceService newsBasedPriceService;
 
-    // 주식과 관련된 기사 찾기
-    public Article findArticleByStockId(String stockId) {
-        return articleRepository.findByStockId(stockId);
-    }
-
-    // 모든 기사 조회
+    /**
+     * 모든 기사 조회
+     */
     public List<Article> getAllArticles() {
         return articleRepository.findAll();
     }
 
-    // AI 기사 등록
+    /**
+     * 특정 주식의 기사 조회 (단일)
+     */
+    public Article findArticleByStockId(String stockId) {
+        return articleRepository.findByStockId(stockId);
+    }
+
+    /**
+     * 특정 주식의 모든 기사 조회
+     */
+    public List<Article> findAllArticlesByStockId(String stockId) {
+        return articleRepository.findAllByStockId(stockId);
+    }
+
+    /**
+     * 기사 저장
+     */
     public Article saveArticle(Article article) {
         return articleRepository.save(article);
+    }
+
+    /**
+     * 기사 ID로 조회
+     */
+    public Article findArticleById(Integer id) {
+        return articleRepository.findById(id).orElse(null);
+    }
+
+    /**
+     * 오늘 생성된 기사 조회
+     */
+    public List<Article> getTodayArticles() {
+        String todayStart = LocalDateTime.now().toLocalDate().atStartOfDay().toString();
+        return articleRepository.findByDateAfter(todayStart);
+    }
+
+    /**
+     * 최근 N개 기사 조회
+     */
+    public List<Article> getRecentArticles(int limit) {
+        return articleRepository.findTopNByOrderByDateDesc(limit);
+    }
+
+    /**
+     * 감정별 기사 조회
+     */
+    public List<Article> getArticlesBySentiment(String sentiment) {
+        return articleRepository.findBySentiment(sentiment);
+    }
+
+    /**
+     * 영향도별 기사 조회
+     */
+    public List<Article> getArticlesByImpact(String impact) {
+        return articleRepository.findByImpact(impact);
+    }
+
+    /**
+     * 날짜 범위별 기사 조회
+     */
+    public List<Article> getArticlesByDateRange(String startDate, String endDate) {
+        return articleRepository.findByDateBetween(startDate, endDate);
+    }
+
+    /**
+     * 기사 삭제
+     */
+    public void deleteArticle(Integer id) {
+        articleRepository.deleteById(id);
+    }
+
+    /**
+     * 기사 존재 여부 확인
+     */
+    public boolean existsById(Integer id) {
+        return articleRepository.existsById(id);
     }
 
     // 정기적으로 기사를 생성하는 스케줄링 메서드 - 4시간마다 실행

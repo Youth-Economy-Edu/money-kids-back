@@ -2,6 +2,7 @@ package com.moneykidsback.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "stock_price_log")
@@ -27,5 +28,5 @@ public class StockPriceLog {
     private int price;
 
     @Column(name = "date")
-    private String date;
+    private LocalDateTime date;
 }

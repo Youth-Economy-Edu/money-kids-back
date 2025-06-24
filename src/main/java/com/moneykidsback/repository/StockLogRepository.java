@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -18,5 +19,5 @@ public interface StockLogRepository extends JpaRepository<StockLog, String> {
 
     // 매도 시점 이전의 매수 내역
     @Query("SELECT l FROM StockLog l WHERE l.user.id = :userId AND l.stock.id = :stockId AND l.date < :beforeDate AND l.quantity > 0")
-    List<StockLog> findBuyLogsBefore(@Param("userId") String userId, @Param("stockId") String stockId, @Param("beforeDate") String beforeDate);
+    List<StockLog> findBuyLogsBefore(@Param("userId") String userId, @Param("stockId") String stockId, @Param("beforeDate") LocalDateTime beforeDate);
 }

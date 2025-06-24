@@ -1,6 +1,10 @@
 package com.moneykidsback.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.moneykidsback.model.dto.request.SaveWishlistDto;
 import com.moneykidsback.model.dto.response.StockChangeRateDto;
 import com.moneykidsback.model.entity.Stock;
+import com.moneykidsback.model.entity.StockPriceLog;
+import com.moneykidsback.repository.StockPriceLogRepository;
 import com.moneykidsback.service.RankingService;
 import com.moneykidsback.service.StockService;
 import com.moneykidsback.service.WishlistService;
@@ -34,12 +40,14 @@ public class StockController {
     private final RankingService rankingService;
     private final WishlistService wishlistService;
     private final StockService stockService;
+    private final StockPriceLogRepository stockPriceLogRepository;
 
     @Autowired
-    public StockController(RankingService rankingService, WishlistService wishlistService, StockService stockService) {
+    public StockController(RankingService rankingService, WishlistService wishlistService, StockService stockService, StockPriceLogRepository stockPriceLogRepository) {
         this.rankingService = rankingService;
         this.wishlistService = wishlistService;
         this.stockService = stockService;
+        this.stockPriceLogRepository = stockPriceLogRepository;
     }
 
     // 전체 주식 목록 조회
@@ -130,9 +138,91 @@ public class StockController {
         return ResponseEntity.ok(wishlist); // 정상 반환(200)
     }
 
-    // 위시리스트에서 주식 삭제
-//    @DeleteMapping("/stocks/favorite")
-//    public void deleteWishlist(@RequestBody SaveWishlistDto saveWishlistDto) {
-//        wishlistService.deleteWishlist(saveWishlistDto);
-//    }
+    // 🌟 특정 주식의 가격 변동 로그 조회 (최근 100개)
+    @GetMapping("/stocks/{stockId}/price-log")
+    public ResponseEntity<?> getStockPriceLogs(@PathVariable String stockId) {
+        try {
+            List<StockPriceLog> logs = stockPriceLogRepository.findTop100ByStock_IdOrderByIdDesc(stockId);
+            if (logs.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            // 결과를 간단한 DTO 형태로 변환
+            List<Map<String, Object>> data = logs.stream()
+                .map(log -> {
+                    Map<String, Object> item = new HashMap<>();
+                    item.put("price", log.getPrice());
+                    item.put("logTime", log.getDate());
+                    return item;
+                })
+                .collect(Collectors.toList());
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 200);
+            response.put("data", data);
+            response.put("msg", "주가 로그 조회 성공");
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("code", 500);
+            errorResponse.put("data", null);
+            errorResponse.put("msg", "주가 로그 조회 실패: " + e.getMessage());
+            
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
+
+    // 🌟 주식 히스토리 조회 (프론트엔드 차트용)
+    @GetMapping("/stocks/{stockId}/history")
+    public ResponseEntity<?> getStockHistory(@PathVariable String stockId, @RequestParam String range) {
+        try {
+            List<StockPriceLog> logs = stockPriceLogRepository.findByStock_IdOrderByDateDesc(stockId);
+            if (logs.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            
+            // range에 따른 데이터 필터링
+            LocalDateTime startTime = LocalDateTime.now();
+            switch (range) {
+                case "1M":
+                    startTime = startTime.minusMinutes(5);
+                    break;
+                case "5M":
+                    startTime = startTime.minusMinutes(30);
+                    break;
+                case "10M":
+                    startTime = startTime.minusHours(1);
+                    break;
+                case "1H":
+                    startTime = startTime.minusHours(6);
+                    break;
+                case "1D":
+                    startTime = startTime.minusDays(7);
+                    break;
+                case "1W":
+                    startTime = startTime.minusWeeks(8);
+                    break;
+                case "1Mon":
+                    startTime = startTime.minusMonths(6);
+                    break;
+                default:
+                    startTime = startTime.minusHours(1);
+            }
+            
+            final LocalDateTime filterTime = startTime;
+            List<Map<String, Object>> historyData = logs.stream()
+                .filter(log -> log.getDate().isAfter(filterTime))
+                .map(log -> {
+                    Map<String, Object> item = new HashMap<>();
+                    item.put("price", log.getPrice());
+                    item.put("timestamp", log.getDate());
+                    return item;
+                })
+                .collect(Collectors.toList());
+            
+            return ResponseEntity.ok(historyData);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
 }

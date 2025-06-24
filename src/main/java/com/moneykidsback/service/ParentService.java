@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.moneykidsback.model.entity.ActivityLog;
 import com.moneykidsback.model.entity.TendencyAnalysis;
@@ -74,23 +75,39 @@ public class ParentService {
     public Map<String, Object> getChildTendencyGraph(String childId) {
         TendencyAnalysis latestAnalysis = tendencyAnalysisRepository
             .findTopByUserIdOrderByCreatedAtDesc(childId)
-            .orElseThrow(() -> new RuntimeException("성향 분석 데이터를 찾을 수 없습니다."));
+            .orElse(null);
 
         Map<String, Object> graphData = new LinkedHashMap<>();
         
-        // 5가지 성향 점수
-        Map<String, Double> scores = new LinkedHashMap<>();
-        scores.put("공격성", latestAnalysis.getAggressiveness());
-        scores.put("적극성", latestAnalysis.getAssertiveness());
-        scores.put("위험중립성", latestAnalysis.getRiskNeutrality());
-        scores.put("안정추구성", latestAnalysis.getSecurityOriented());
-        scores.put("신중함", latestAnalysis.getCalmness());
-        
-        graphData.put("scores", scores);
-        graphData.put("finalType", latestAnalysis.getType());
-        graphData.put("feedback", latestAnalysis.getFeedback());
-        graphData.put("guidance", latestAnalysis.getGuidance());
-        graphData.put("lastAnalyzedAt", latestAnalysis.getCreatedAt());
+        if (latestAnalysis == null) {
+            // 데이터가 없을 때 기본값 반환
+            Map<String, Double> defaultScores = new LinkedHashMap<>();
+            defaultScores.put("공격성", 50.0);
+            defaultScores.put("적극성", 50.0);
+            defaultScores.put("위험중립성", 50.0);
+            defaultScores.put("안정추구성", 50.0);
+            defaultScores.put("신중함", 50.0);
+            
+            graphData.put("scores", defaultScores);
+            graphData.put("finalType", "분석 대기중");
+            graphData.put("feedback", "아직 충분한 데이터가 수집되지 않았습니다. 더 많은 활동을 통해 성향을 분석해보세요.");
+            graphData.put("guidance", "다양한 경제 활동에 참여하여 성향 분석 데이터를 축적해보세요.");
+            graphData.put("lastAnalyzedAt", LocalDateTime.now());
+        } else {
+            // 5가지 성향 점수
+            Map<String, Double> scores = new LinkedHashMap<>();
+            scores.put("공격성", latestAnalysis.getAggressiveness());
+            scores.put("적극성", latestAnalysis.getAssertiveness());
+            scores.put("위험중립성", latestAnalysis.getRiskNeutrality());
+            scores.put("안정추구성", latestAnalysis.getSecurityOriented());
+            scores.put("신중함", latestAnalysis.getCalmness());
+            
+            graphData.put("scores", scores);
+            graphData.put("finalType", latestAnalysis.getType());
+            graphData.put("feedback", latestAnalysis.getFeedback());
+            graphData.put("guidance", latestAnalysis.getGuidance());
+            graphData.put("lastAnalyzedAt", latestAnalysis.getCreatedAt());
+        }
         
         return graphData;
     }
@@ -119,12 +136,20 @@ public class ParentService {
                 Collectors.counting()
             ));
         
+        // 일평균 계산 (소수점 1자리까지)
+        double averagePerDay = days > 0 ? (double) recentLogs.size() / days : 0;
+        double roundedAverage = Math.round(averagePerDay * 10.0) / 10.0;
+        
         summary.put("totalActivities", recentLogs.size());
         summary.put("activityByType", activityCounts);
         summary.put("activityByStatus", statusCounts);
         summary.put("periodDays", days);
         summary.put("mostActiveDay", getMostActiveDay(recentLogs));
-        summary.put("averageActivitiesPerDay", (double) recentLogs.size() / days);
+        summary.put("averageActivitiesPerDay", roundedAverage);
+        
+        // 일별 활동 데이터 계산 (실제 요일별 카운트)
+        List<Map<String, Object>> dailyActivities = calculateDailyActivities(recentLogs);
+        summary.put("dailyActivities", dailyActivities);
         
         return summary;
     }
@@ -168,35 +193,36 @@ public class ParentService {
         User child = userRepository.findById(childId)
             .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        List<UserStock> userStocks = userStockRepository.findByUser(child);
+        // 수량이 0보다 큰 주식만 직접 조회
+        List<UserStock> activeStocks = userStockRepository.findByUserAndQuantityGreaterThan(child, 0);
         
         Map<String, Object> analysis = new LinkedHashMap<>();
         
-        if (userStocks.isEmpty()) {
+        if (activeStocks.isEmpty()) {
             analysis.put("hasInvestments", false);
             analysis.put("message", "아직 투자 활동이 없습니다.");
             return analysis;
         }
         
         analysis.put("hasInvestments", true);
-        analysis.put("totalStocks", userStocks.size());
+        analysis.put("totalStocks", activeStocks.size());
         
-        // 포트폴리오 구성
-        Map<String, Integer> stockComposition = userStocks.stream()
+        // 포트폴리오 구성 (수량이 0보다 큰 주식만)
+        Map<String, Integer> stockComposition = activeStocks.stream()
             .collect(Collectors.toMap(
                 us -> us.getStock().getName(),
                 UserStock::getQuantity
             ));
         
-        // 카테고리별 분산
-        Map<String, Long> categoryDistribution = userStocks.stream()
+        // 카테고리별 분산 (수량이 0보다 큰 주식만)
+        Map<String, Long> categoryDistribution = activeStocks.stream()
             .collect(Collectors.groupingBy(
                 us -> us.getStock().getCategory(),
                 Collectors.counting()
             ));
         
-        // 총 투자 가치 계산
-        int totalInvestmentValue = userStocks.stream()
+        // 총 투자 가치 계산 (수량이 0보다 큰 주식만)
+        int totalInvestmentValue = activeStocks.stream()
             .mapToInt(UserStock::getTotal)
             .sum();
         
@@ -386,6 +412,39 @@ public class ParentService {
         return categoryDistribution.size(); // 단순히 카테고리 수로 계산
     }
 
+    private List<Map<String, Object>> calculateDailyActivities(List<ActivityLog> logs) {
+        // 요일별 활동 수 계산
+        Map<String, Long> dayOfWeekCounts = logs.stream()
+            .collect(Collectors.groupingBy(
+                log -> {
+                    switch (log.getCreatedAt().getDayOfWeek()) {
+                        case MONDAY: return "월";
+                        case TUESDAY: return "화";
+                        case WEDNESDAY: return "수";
+                        case THURSDAY: return "목";
+                        case FRIDAY: return "금";
+                        case SATURDAY: return "토";
+                        case SUNDAY: return "일";
+                        default: return "기타";
+                    }
+                },
+                Collectors.counting()
+            ));
+        
+        // 순서대로 요일 데이터 생성
+        List<Map<String, Object>> dailyActivities = new ArrayList<>();
+        String[] weekDays = {"월", "화", "수", "목", "금", "토", "일"};
+        
+        for (String day : weekDays) {
+            Map<String, Object> dayData = new HashMap<>();
+            dayData.put("day", day);
+            dayData.put("count", dayOfWeekCounts.getOrDefault(day, 0L));
+            dailyActivities.add(dayData);
+        }
+        
+        return dailyActivities;
+    }
+
     private List<String> getRecommendedLearningAreas(TendencyAnalysis analysis) {
         List<String> areas = new ArrayList<>();
         
@@ -411,5 +470,19 @@ public class ParentService {
         }
         
         return areas;
+    }
+
+    /**
+     * 테스트용 ActivityLog 생성 메서드
+     */
+    public void createTestActivityLog(String userId, String activityType) {
+        ActivityLog testLog = ActivityLog.builder()
+            .userId(userId)
+            .activityType(activityType)
+            .status("SUCCESS")
+            .createdAt(LocalDateTime.now())
+            .build();
+        
+        activityLogRepository.save(testLog);
     }
 } 

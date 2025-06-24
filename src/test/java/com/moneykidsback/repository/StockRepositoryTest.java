@@ -46,7 +46,7 @@ public class StockRepositoryTest {
 
             stock.setBeforePrice(beforePrice); // 자정 기준 가격
             stock.setPrice(price);             // 변동 후 가격
-            stock.setUpdatedAt(midnight);      // 자정 시간
+            stock.setUpdateAt(midnight);      // 자정 시간
 
             stocks.add(stock);
         }
@@ -59,6 +59,22 @@ public class StockRepositoryTest {
     public void findAllByOrderByPriceDescTest() {
         setUp();
         StocksPriceChangesTest();
+
+        List<Stock> stocks = stockRepository.findAllByOrderByPriceDesc();
+
+        // 검증: 가격이 내림차순으로 정렬되어 있는지 확인
+        for (int i = 1; i < stocks.size(); i++) {
+            Stock prev = stocks.get(i - 1);
+            Stock curr = stocks.get(i);
+            assertTrue(prev.getPrice() >= curr.getPrice());
+        }
+        for (Stock stock : stocks) {
+            System.out.printf("code: %s | name: %s | price: %d | category: %s | updateTime: %s\n",
+                stock.getCode(), stock.getName(), stock.getPrice(), stock.getCategory(), stock.getUpdateAt());
+        }
+    }
+
+    @Test
     @DisplayName("이름으로 종목 찾기")
     public void findByNameTest() {
         // 1. testdb에 더미 데이터 삽입
@@ -76,19 +92,8 @@ public class StockRepositoryTest {
         stock2.setCategory("IT");
         stockRepository.save(stock2);
 
-        List<Stock> stocks = stockRepository.findAllByOrderByPriceDesc();
         // 2. 이름으로 종목 찾기
         List<Stock> foundStocks = stockRepository.findByName("삼성전자");
-
-        // 검증: 가격이 내림차순으로 정렬되어 있는지 확인
-        for (int i = 1; i < stocks.size(); i++) {
-            Stock prev = stocks.get(i - 1);
-            Stock curr = stocks.get(i);
-            assertTrue(prev.getPrice() >= curr.getPrice());
-        }
-        for (Stock stock : stocks) {
-            System.out.printf("code: "+ stock.getCode() + "| name: "+stock.getName()+" | price: "+stock.getPrice()+" | category: "+stock.getCategory()+" | updateTime: "+stock.getUpdatedAt()+"\n");
-        }    }
 
         // 3. 결과 검증
         assert foundStocks.size() == 1;
@@ -110,6 +115,26 @@ public class StockRepositoryTest {
     public void stockChangeRateTest() {
         // todo: 주식 테이블에 beforPrice 컬럼 필요함
         StocksPriceChangesTest(); // 더미 데이터 저장
+
+        List<StockChangeRateDto> result = stockRepository.findAllOrderByChangeRateDescWithDto();
+
+        // 검증: 변동률이 내림차순으로 정렬되어 있는지 확인
+        System.out.println("결과 개수: " + result.size());
+        for (StockChangeRateDto dto : result) {
+            System.out.println(dto.getCode() + " | " + dto.getChangeRate());
+        }
+
+        for (StockChangeRateDto dto : result) {
+            System.out.printf("code: %s | name: %s | price: %d | category: %s | updateTime: %s | changeRate: %.2f%%\n",
+                dto.getCode(), dto.getName(), dto.getPrice(), dto.getCategory(), dto.getUpdateAt(), dto.getChangeRate());
+        }
+        //변동률 순위 검증
+        for (int i = 1; i < result.size(); i++) {
+            assertTrue(result.get(i - 1).getChangeRate() >= result.get(i).getChangeRate());
+        }
+    }
+
+    @Test
     @DisplayName("카테고리로 종목 찾기")
     public void findByCategoryTest() {
         // 1. testdb에 더미 데이터 삽입
@@ -120,7 +145,6 @@ public class StockRepositoryTest {
         stock1.setCategory("IT");
         stockRepository.save(stock1);
 
-        List<StockChangeRateDto> result = stockRepository.findAllOrderByChangeRateDescWithDto();
         Stock stock2 = new Stock();
         stock2.setCode("000660");
         stock2.setName("SK하이닉스");
@@ -128,20 +152,9 @@ public class StockRepositoryTest {
         stock2.setCategory("IT");
         stockRepository.save(stock2);
 
-        // 검증: 변동률이 내림차순으로 정렬되어 있는지 확인
-        System.out.println("결과 개수: " + result.size());
-        for (StockChangeRateDto dto : result) {
-            System.out.println(dto.getCode() + " | " + dto.getChangeRate());
-        }
         // 2. 카테고리로 종목 찾기
         List<Stock> foundStocks = stockRepository.findByCategory("IT");
 
-        for (StockChangeRateDto dto : result) {
-            System.out.printf("code: "+ dto.getCode() + "| name: "+dto.getName()+" | price: "+dto.getPrice()+" | category: "+dto.getCategory()+" | updateTime: "+dto.getUpdateAt()+" | changeRate: %.2f%%\n", dto.getChangeRate());
-        }
-        //변동률 순위 검증
-        for (int i = 1; i < result.size(); i++) {
-            assertTrue(result.get(i - 1).getChangeRate() >= result.get(i).getChangeRate());
         // 3. 결과 검증
         assert foundStocks.size() == 2;
         for (Stock foundStock : foundStocks) {

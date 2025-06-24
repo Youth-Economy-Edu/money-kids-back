@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.moneykidsback.model.entity.Article;
 import com.moneykidsback.service.ArticleService;
 import com.moneykidsback.service.NewsGenerateService;
+import com.moneykidsback.service.NewsBasedPriceService;
 
 /**
  * 📰 경제 소식/기사 컨트롤러
@@ -26,12 +27,15 @@ import com.moneykidsback.service.NewsGenerateService;
 @RestController
 @RequestMapping("/api/articles")
 public class ArticleController {
-    
+
     @Autowired
     private ArticleService articleService;
 
     @Autowired
     private NewsGenerateService newsGenerateService;
+
+    @Autowired
+    private NewsBasedPriceService newsBasedPriceService;
 
     // 특정 주식의 기사 조회
     @GetMapping("/stock/{stockId}")
@@ -45,7 +49,7 @@ public class ArticleController {
                     "msg", "해당 주식의 기사가 없습니다."
                 ));
             }
-            
+
             return ResponseEntity.ok(Map.of(
                 "code", 200,
                 "data", Map.of(
@@ -54,6 +58,8 @@ public class ArticleController {
                     "title", article.getTitle(),
                     "content", article.getContent(),
                     "effect", article.getEffect(),
+                    "sentiment", article.getSentiment(),
+                    "impact", article.getImpact(),
                     "date", article.getDate()
                 ),
                 "msg", "기사 조회 성공"
@@ -72,7 +78,7 @@ public class ArticleController {
     public ResponseEntity<?> getAllArticles() {
         try {
             List<Article> articles = articleService.getAllArticles();
-            
+
             List<Map<String, Object>> articleData = articles.stream()
                 .map(article -> {
                     Map<String, Object> map = new java.util.HashMap<>();
@@ -81,11 +87,13 @@ public class ArticleController {
                     map.put("title", article.getTitle());
                     map.put("content", article.getContent());
                     map.put("effect", article.getEffect());
+                    map.put("sentiment", article.getSentiment());
+                    map.put("impact", article.getImpact());
                     map.put("date", article.getDate());
                     return map;
                 })
                 .collect(java.util.stream.Collectors.toList());
-            
+
             return ResponseEntity.ok(Map.of(
                 "code", 200,
                 "data", articleData,
@@ -106,7 +114,9 @@ public class ArticleController {
         try {
             System.out.println("📰 기사 생성 요청 수신");
             List<String> articles = newsGenerateService.generateAndSaveNewsForAllStocks();
-            
+
+            newsBasedPriceService.startNewsBasedPriceMovement();
+
             return ResponseEntity.ok(Map.of(
                 "code", 200,
                 "data", Map.of(
