@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.moneykidsback.model.entity.User;
 import com.moneykidsback.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -19,6 +22,7 @@ import lombok.RequiredArgsConstructor;
  * - 일반 회원가입/로그인
  * - OAuth2 소셜 로그인 (Google, Kakao) 지원
  */
+@Tag(name = "Authentication", description = "사용자 인증 관리")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -26,10 +30,12 @@ public class AuthController {
 
     private final UserService userService;
 
+    @Operation(summary = "회원가입", description = "새로운 사용자 계정을 생성합니다")
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestParam String id,
-                                        @RequestParam String name,
-                                        @RequestParam String password) {
+    public ResponseEntity<?> registerUser(
+            @Parameter(description = "사용자 ID", required = true) @RequestParam String id,
+            @Parameter(description = "사용자 이름", required = true) @RequestParam String name,
+            @Parameter(description = "비밀번호", required = true) @RequestParam String password) {
         try {
             User newUser = userService.registerUser(id, name, password);
             
@@ -61,9 +67,11 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "로그인", description = "사용자 로그인을 처리합니다")
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestParam String id,
-                                 @RequestParam String password) {
+    public ResponseEntity<?> login(
+            @Parameter(description = "사용자 ID", required = true) @RequestParam String id,
+            @Parameter(description = "비밀번호", required = true) @RequestParam String password) {
         try {
             User user = userService.login(id, password);
             

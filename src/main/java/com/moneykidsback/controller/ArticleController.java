@@ -18,12 +18,17 @@ import com.moneykidsback.service.ArticleService;
 import com.moneykidsback.service.NewsGenerateService;
 import com.moneykidsback.service.NewsBasedPriceService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 /**
  * 📰 경제 소식/기사 컨트롤러
  * - AI 생성 뉴스 기사 관리
  * - 주식별 기사 조회
  * - 기사와 주가 연동 시스템
  */
+@Tag(name = "Article", description = "경제 기사 관리")
 @RestController
 @RequestMapping("/api/articles")
 public class ArticleController {
@@ -37,9 +42,10 @@ public class ArticleController {
     @Autowired
     private NewsBasedPriceService newsBasedPriceService;
 
-    // 특정 주식의 기사 조회
+    @Operation(summary = "특정 주식의 기사 조회", description = "주식 ID로 해당 주식의 기사를 조회합니다")
     @GetMapping("/stock/{stockId}")
-    public ResponseEntity<?> getArticleByStockId(@PathVariable String stockId) {
+    public ResponseEntity<?> getArticleByStockId(
+            @Parameter(description = "주식 ID", required = true) @PathVariable String stockId) {
         try {
             Article article = articleService.findArticleByStockId(stockId);
             if (article == null) {
@@ -73,7 +79,7 @@ public class ArticleController {
         }
     }
 
-    // 모든 기사 조회
+    @Operation(summary = "모든 기사 조회", description = "등록된 모든 기사를 조회합니다")
     @GetMapping("/all")
     public ResponseEntity<?> getAllArticles() {
         try {
@@ -108,7 +114,7 @@ public class ArticleController {
         }
     }
 
-    // 기사 수동 생성 트리거
+    @Operation(summary = "AI 기사 생성", description = "모든 주식에 대한 AI 기사를 생성합니다")
     @PostMapping("/generate")
     public ResponseEntity<?> generateArticles() {
         try {
@@ -135,7 +141,7 @@ public class ArticleController {
         }
     }
 
-    // AI 기사 등록 (기존 유지)
+    @Operation(summary = "기사 등록", description = "새로운 기사를 등록합니다")
     @PostMapping()
     public ResponseEntity<Article> saveArticle(@RequestBody Article article) {
         Article savedArticle = articleService.saveArticle(article);

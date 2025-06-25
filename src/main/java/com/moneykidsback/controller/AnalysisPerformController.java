@@ -19,6 +19,9 @@ import com.moneykidsback.model.entity.TendencyAnalysis;
 import com.moneykidsback.service.AnalysisPerformService;
 import com.moneykidsback.service.AnalysisResultService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -28,6 +31,7 @@ import lombok.RequiredArgsConstructor;
  * - 학부모용 분석 결과 조회
  * - 성향 변화 이력 추적
  */
+@Tag(name = "Analysis", description = "투자 성향 분석 관리")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/analysis")
@@ -37,6 +41,7 @@ public class AnalysisPerformController {
     private final AnalysisPerformService analysisPerformService;
 
     // 사용자의 활동 로그를 기반으로 투자 성향 분석을 수행하는 API
+    @Operation(summary = "투자 성향 분석 수행", description = "사용자의 활동 로그를 기반으로 투자 성향을 분석합니다")
     @PostMapping("/perform")
     public ResponseEntity<?> performAnalysis(@RequestBody AnalysisPerformRequestDTO requestDTO) {
         if (requestDTO.getUserId() == null || requestDTO.getActivityLogs() == null || requestDTO.getActivityLogs().isEmpty()) {
@@ -73,8 +78,10 @@ public class AnalysisPerformController {
     }
 
     // 사용자의 최신 분석 결과를 가져오는 API
+    @Operation(summary = "최신 분석 결과 조회", description = "사용자의 최신 투자 성향 분석 결과를 조회합니다")
     @GetMapping("/result")
-    public ResponseEntity<?> getLatestResult(@RequestParam("user_id") String userId) {
+    public ResponseEntity<?> getLatestResult(
+            @Parameter(description = "사용자 ID", required = true) @RequestParam("user_id") String userId) {
         try {
             AnalysisResultResponseDTO response = analysisResultService.getLatestResult(userId);
             return ResponseEntity.ok(response);
@@ -86,8 +93,10 @@ public class AnalysisPerformController {
     }
 
     // 특정 사용자의 성향 분석 결과를 생성일 기준으로 내림차순 정렬하여 가져오는 API
+    @Operation(summary = "분석 결과 이력 조회", description = "사용자의 성향 분석 결과 이력을 조회합니다")
     @GetMapping("/history")
-    public ResponseEntity<?> getAnalysisHistory(@RequestParam("user_id") String userId) {
+    public ResponseEntity<?> getAnalysisHistory(
+            @Parameter(description = "사용자 ID", required = true) @RequestParam("user_id") String userId) {
         List<TendencyAnalysis> history = analysisResultService.getAnalysisHistory(userId);
 
         List<Map<String, Object>> response = history.stream().map(record -> {
@@ -120,8 +129,10 @@ public class AnalysisPerformController {
 
     // 특정 사용자의 성향 분석 결과 전체 삭제 API
     // 굳이 필요할 것 같지 않으나 이스터에그로 남겨둠
+    @Operation(summary = "분석 결과 삭제", description = "특정 사용자의 성향 분석 결과를 전체 삭제합니다")
     @DeleteMapping("/result")
-    public ResponseEntity<?> deleteAnalysis(@RequestParam("user_id") String userId) {
+    public ResponseEntity<?> deleteAnalysis(
+            @Parameter(description = "사용자 ID", required = true) @RequestParam("user_id") String userId) {
         try {
             analysisResultService.deleteAnalysisByUserId(userId);
             return ResponseEntity.ok(Map.of("code", 200, "msg", "200 ok"));

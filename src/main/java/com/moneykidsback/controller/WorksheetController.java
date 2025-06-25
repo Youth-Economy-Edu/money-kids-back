@@ -17,12 +17,17 @@ import com.moneykidsback.model.dto.response.WorksheetDetailResponseDto;
 import com.moneykidsback.model.dto.response.WorksheetResponseDto;
 import com.moneykidsback.service.WorksheetService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 /**
  * 📚 경제 개념 학습 컨트롤러
  * - 카테고리별 경제 개념 (저축, 투자, 소비 등)
  * - 난이도별 학습 콘텐츠
  * - 워크시트 형태의 학습 자료
  */
+@Tag(name = "Worksheet", description = "경제 개념 학습 관리")
 @RestController
 @RequestMapping("/api")
 public class WorksheetController {
@@ -31,8 +36,10 @@ public class WorksheetController {
     private WorksheetService worksheetService;
 
     // ✅ 난이도별 목록 (id + title만)
+    @Operation(summary = "난이도별 워크시트 목록", description = "난이도별로 워크시트 목록을 조회합니다")
     @GetMapping("/worksheet/difficulty/{level}")
-    public ResponseEntity<Map<String, Object>> getConceptIds(@PathVariable int level) {
+    public ResponseEntity<Map<String, Object>> getConceptIds(
+            @Parameter(description = "난이도 레벨", required = true) @PathVariable int level) {
         List<WorksheetResponseDto> ids = worksheetService.getConceptsByDifficulty(level);
 
         Map<String, Object> response = new HashMap<>();
@@ -40,8 +47,10 @@ public class WorksheetController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "워크시트 상세 조회", description = "특정 워크시트의 상세 내용을 조회합니다")
     @GetMapping("/worksheet/{id}")
-    public ResponseEntity<Map<String, Object>> getConceptDetail(@PathVariable Integer id) {
+    public ResponseEntity<Map<String, Object>> getConceptDetail(
+            @Parameter(description = "워크시트 ID", required = true) @PathVariable Integer id) {
         WorksheetDetailResponseDto optionalConcept = worksheetService.getConceptById(id);
         Map<String, Object> response = new HashMap<>();
 
@@ -62,6 +71,7 @@ public class WorksheetController {
      * - 하루 1회 포인트 지급 제한
      * - 중복 완료 방지
      */
+    @Operation(summary = "워크시트 학습 완료", description = "워크시트 학습을 완료하고 포인트를 지급받습니다")
     @PostMapping("/user/worksheet/complete")
     public ResponseEntity<Map<String, Object>> completeWorksheet(@RequestBody WorksheetCompleteRequestDto request) {
         Map<String, Object> response = new HashMap<>();
@@ -88,8 +98,10 @@ public class WorksheetController {
     /**
      * 📊 사용자 학습 진도 조회 API
      */
+    @Operation(summary = "사용자 학습 진도 조회", description = "사용자의 워크시트 학습 진도를 조회합니다")
     @GetMapping("/user/{userId}/worksheet/progress")
-    public ResponseEntity<Map<String, Object>> getUserProgress(@PathVariable String userId) {
+    public ResponseEntity<Map<String, Object>> getUserProgress(
+            @Parameter(description = "사용자 ID", required = true) @PathVariable String userId) {
         Map<String, Object> response = new HashMap<>();
         
         try {

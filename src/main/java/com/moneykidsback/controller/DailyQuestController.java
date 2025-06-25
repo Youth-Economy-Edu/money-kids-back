@@ -20,6 +20,9 @@ import com.moneykidsback.repository.DailyQuestRepository;
 import com.moneykidsback.repository.UserRepository;
 import com.moneykidsback.service.DailyQuestService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -28,6 +31,7 @@ import lombok.RequiredArgsConstructor;
  * - 퀴즈, 거래, 학습 진행률 추적
  * - 포인트 리워드 시스템
  */
+@Tag(name = "Daily Quest", description = "일일 퀘스트 관리")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/home")
@@ -37,8 +41,10 @@ public class DailyQuestController {
     private final UserRepository userRepository;
     private final DailyQuestService questService;
 
+    @Operation(summary = "일일 퀘스트 조회", description = "사용자의 오늘 일일 퀘스트를 조회합니다")
     @GetMapping("/{userId}/quests")
-    public DailyQuestResponseDto getDailyQuests(@PathVariable String userId) {
+    public DailyQuestResponseDto getDailyQuests(
+            @Parameter(description = "사용자 ID", required = true) @PathVariable String userId) {
         User user = userRepository.findById(userId).orElseThrow();
         List<DailyQuest> quests = questRepository.findByUserAndQuestDate(user, LocalDate.now());
 
@@ -50,9 +56,10 @@ public class DailyQuestController {
         return new DailyQuestResponseDto(userId, quests.stream().limit(3).toList());
     }
 
+    @Operation(summary = "퀘스트 진행도 업데이트", description = "퀘스트 진행도를 업데이트합니다")
     @PostMapping("/{userId}/quests/progress")
     public ResponseEntity<DailyQuestProgressResponseDto> updateQuestProgress(
-            @PathVariable String userId,
+            @Parameter(description = "사용자 ID", required = true) @PathVariable String userId,
             @RequestBody DailyQuestProgressRequestDto request
     ) {
         var response = questService.updateProgress(userId, request.getQuestType(), request.getAmount());

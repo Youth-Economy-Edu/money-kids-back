@@ -13,6 +13,8 @@ import com.moneykidsback.service.NewsBasedPriceService;
 import com.moneykidsback.service.NewsGenerateService;
 import com.moneykidsback.service.OpenAiService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -22,6 +24,7 @@ import lombok.RequiredArgsConstructor;
  * - 뉴스 기반 주가 변동 시뮬레이션
  * - 4시간마다 자동 생성 스케줄링
  */
+@Tag(name = "AI News", description = "AI 뉴스 생성 시스템")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/news")
@@ -34,11 +37,13 @@ public class AIController {
     @Value("${openai.api.key}")
     private String configApiKey;
 
+    @Operation(summary = "AI 기사 생성", description = "모든 주식에 대한 AI 기사를 생성합니다")
     @PostMapping("/generate")
     public List<String> generateArticleByStock() throws InterruptedException {
         return newsGenerateService.generateAndSaveNewsForAllStocks();
     }
 
+    @Operation(summary = "API 키 테스트", description = "OpenAI API 키가 정상 작동하는지 테스트합니다")
     @GetMapping("/test-api-key")
     public String testApiKey() {
         System.out.println("=== API 키 테스트 요청 수신됨 ===");
@@ -52,6 +57,7 @@ public class AIController {
     }
     
     // 기사 기반 주가 변동 테스트
+    @Operation(summary = "주가 변동 시뮬레이션", description = "기사 기반 주가 변동을 수동으로 실행합니다")
     @PostMapping("/trigger-price-movement")
     public Map<String, Object> triggerNewsBasedPriceMovement() {
         try {
@@ -73,6 +79,7 @@ public class AIController {
     }
     
     // 전체 워크플로우 테스트 (기사 생성 + 주가 변동)
+    @Operation(summary = "전체 워크플로우 실행", description = "기사 생성과 주가 변동을 포함한 전체 워크플로우를 실행합니다")
     @PostMapping("/full-workflow")
     public Map<String, Object> runFullWorkflow() throws InterruptedException {
         try {

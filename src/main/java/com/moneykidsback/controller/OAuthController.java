@@ -2,6 +2,10 @@ package com.moneykidsback.controller;
 
 import com.moneykidsback.model.entity.User;
 import com.moneykidsback.service.OAuthService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,6 +21,7 @@ import java.util.Map;
  * OAuth 로그인 컨트롤러
  * Kakao, Google 소셜 로그인 처리
  */
+@Tag(name = "OAuth", description = "소셜 로그인 인증")
 @Slf4j
 @RestController
 @RequestMapping("/api/users/login")
@@ -25,12 +30,10 @@ public class OAuthController {
     
     private final OAuthService oAuthService;
     
-    /**
-     * 카카오 로그인 콜백 처리
-     */
+    @Operation(summary = "카카오 로그인 콜백", description = "카카오 로그인 인증 후 콜백을 처리합니다")
     @GetMapping("/kakao/callback")
     public ResponseEntity<?> kakaoCallback(
-            @RequestParam("code") String code,
+            @Parameter(description = "카카오 인증 코드", required = true) @RequestParam("code") String code,
             HttpServletResponse response) {
         try {
             log.info("카카오 로그인 콜백 - code: {}", code);
@@ -66,12 +69,10 @@ public class OAuthController {
         }
     }
     
-    /**
-     * 구글 로그인 콜백 처리
-     */
+    @Operation(summary = "구글 로그인 콜백", description = "구글 로그인 인증 후 콜백을 처리합니다")
     @GetMapping("/google/callback")
     public ResponseEntity<?> googleCallback(
-            @RequestParam("code") String code,
+            @Parameter(description = "구글 인증 코드", required = true) @RequestParam("code") String code,
             HttpServletResponse response) {
         try {
             log.info("구글 로그인 콜백 - code: {}", code);

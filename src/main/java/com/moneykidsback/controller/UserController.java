@@ -3,6 +3,10 @@ package com.moneykidsback.controller;
 import com.moneykidsback.model.entity.User;
 import com.moneykidsback.service.UserService;
 import com.moneykidsback.repository.UserRepository;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@Tag(name = "User", description = "사용자 정보 관리")
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -18,14 +23,14 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
 
-    // 사용자 정보 조회 (포인트 포함)
+    @Operation(summary = "사용자 정보 조회", description = "사용자 정보를 조회합니다")
     @GetMapping("/{userId}")
-    public ResponseEntity<?> getUserInfo(@PathVariable String userId) {
+    public ResponseEntity<?> getUserInfo(
+            @Parameter(description = "사용자 ID", required = true) @PathVariable String userId) {
         try {
             User user = userService.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
             
-            // User 객체를 직접 반환하도록 수정
             return ResponseEntity.ok(user);
             
         } catch (Exception e) {
@@ -37,9 +42,10 @@ public class UserController {
         }
     }
 
-    // 사용자 포인트만 조회
+    @Operation(summary = "사용자 포인트 조회", description = "사용자의 포인트 정보를 조회합니다")
     @GetMapping("/{userId}/points")
-    public ResponseEntity<?> getUserPoints(@PathVariable String userId) {
+    public ResponseEntity<?> getUserPoints(
+            @Parameter(description = "사용자 ID", required = true) @PathVariable String userId) {
         try {
             User user = userService.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
@@ -63,9 +69,11 @@ public class UserController {
         }
     }
 
-    // 사용자 포인트 업데이트 (개발/테스트용)
+    @Operation(summary = "사용자 포인트 업데이트", description = "사용자의 포인트를 업데이트합니다")
     @PutMapping("/{userId}/points")
-    public ResponseEntity<?> updateUserPoints(@PathVariable String userId, @RequestBody Map<String, Object> request) {
+    public ResponseEntity<?> updateUserPoints(
+            @Parameter(description = "사용자 ID", required = true) @PathVariable String userId, 
+            @RequestBody Map<String, Object> request) {
         try {
             User user = userService.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));

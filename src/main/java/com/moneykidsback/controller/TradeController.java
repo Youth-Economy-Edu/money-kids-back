@@ -21,6 +21,9 @@ import com.moneykidsback.model.dto.response.OrderDetailResponse;
 import com.moneykidsback.model.dto.response.TradeHistoryResponse;
 import com.moneykidsback.service.TradeService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -30,16 +33,18 @@ import lombok.RequiredArgsConstructor;
  * - 거래 내역 및 수익률 분석
  * - 포트폴리오 관리
  */
+@Tag(name = "Trading", description = "주식 거래 관리")
 @RestController
 @RequestMapping("/api/stocks/trade")
 @RequiredArgsConstructor
 public class TradeController {
     private final TradeService tradeService;
 
+    @Operation(summary = "주식 매수", description = "주식을 매수합니다")
     @PostMapping("/buy")
     public ResponseEntity<String> buyStock(
             @RequestBody TradeRequest request,
-            @RequestParam(value = "userId", required = false) String userId) {
+            @Parameter(description = "사용자 ID") @RequestParam(value = "userId", required = false) String userId) {
 
         // userId가 없으면 기본값 사용 (개발/테스트용)
         if (userId == null || userId.isEmpty()) {
@@ -50,10 +55,11 @@ public class TradeController {
         return ResponseEntity.ok("매수 완료");
     }
 
+    @Operation(summary = "주식 매도", description = "주식을 매도합니다")
     @PostMapping("/sell")
     public ResponseEntity<?> sellStock(
             @RequestBody TradeRequest request,
-            @RequestParam(value = "userId", required = false) String userId) {
+            @Parameter(description = "사용자 ID") @RequestParam(value = "userId", required = false) String userId) {
         
         // userId가 없으면 기본값 사용 (개발/테스트용)
         if (userId == null || userId.isEmpty()) {
@@ -64,37 +70,42 @@ public class TradeController {
         return ResponseEntity.ok().body("매도 완료");
     }
 
+    @Operation(summary = "잔고 조회", description = "사용자의 현재 잔고를 조회합니다")
     @GetMapping("/balance")
     public ResponseEntity<BalanceResponse> getBalance(
-            @RequestParam(value = "userId", defaultValue = "master") String userId) {
+            @Parameter(description = "사용자 ID") @RequestParam(value = "userId", defaultValue = "master") String userId) {
         BalanceResponse balance = tradeService.getBalance(userId);
         return ResponseEntity.ok(balance);
     }
 
+    @Operation(summary = "포트폴리오 조회", description = "사용자의 포트폴리오를 조회합니다")
     @GetMapping("/portfolio")
     public ResponseEntity<Map<String, Object>> getPortfolio(
-            @RequestParam(value = "userId", defaultValue = "master") String userId) {
+            @Parameter(description = "사용자 ID") @RequestParam(value = "userId", defaultValue = "master") String userId) {
         Map<String, Object> portfolio = tradeService.getPortfolio(userId);
         return ResponseEntity.ok(portfolio);
     }
 
+    @Operation(summary = "주문 상세 조회", description = "특정 주식의 주문 상세 정보를 조회합니다")
     @GetMapping("/order/{stockId}")
     public ResponseEntity<OrderDetailResponse> getOrderDetail(
-            @PathVariable String stockId,
-            @RequestParam(value = "userId", defaultValue = "master") String userId) {
+            @Parameter(description = "주식 ID", required = true) @PathVariable String stockId,
+            @Parameter(description = "사용자 ID") @RequestParam(value = "userId", defaultValue = "master") String userId) {
         return ResponseEntity.ok(tradeService.getOrderDetail(userId, stockId));
     }
 
+    @Operation(summary = "전체 거래 내역 조회", description = "사용자의 모든 거래 내역을 조회합니다")
     @GetMapping("/history")
     public ResponseEntity<List<TradeHistoryResponse>> getAllTradeHistory(
-            @RequestParam(value = "userId", defaultValue = "master") String userId) {
+            @Parameter(description = "사용자 ID") @RequestParam(value = "userId", defaultValue = "master") String userId) {
         return ResponseEntity.ok(tradeService.getAllTradeHistory(userId));
     }
 
+    @Operation(summary = "거래 타입별 내역 조회", description = "거래 타입별로 거래 내역을 조회합니다")
     @GetMapping("/history/{type}")
     public ResponseEntity<List<TradeHistoryResponse>> getTradeHistoryByType(
-            @PathVariable String type,
-            @RequestParam(value = "userId", defaultValue = "master") String userId) {
+            @Parameter(description = "거래 타입", required = true) @PathVariable String type,
+            @Parameter(description = "사용자 ID") @RequestParam(value = "userId", defaultValue = "master") String userId) {
         return ResponseEntity.ok(tradeService.getTradeHistoryByType(userId, type));
     }
 }

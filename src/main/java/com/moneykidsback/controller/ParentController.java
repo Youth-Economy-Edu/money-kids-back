@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.moneykidsback.service.ParentService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -21,6 +24,7 @@ import lombok.RequiredArgsConstructor;
  * - 자녀 활동 로그 및 성과 분석
  * - 학부모용 통합 대시보드
  */
+@Tag(name = "Parent", description = "학부모 대시보드 관리")
 @RestController
 @RequestMapping("/api/parent")
 @RequiredArgsConstructor
@@ -31,8 +35,10 @@ public class ParentController {
     /**
      * 자녀 기본 프로필 조회
      */
+    @Operation(summary = "자녀 프로필 조회", description = "자녀의 기본 프로필 정보를 조회합니다")
     @GetMapping("/child/{childId}/profile")
-    public ResponseEntity<?> getChildProfile(@PathVariable String childId) {
+    public ResponseEntity<?> getChildProfile(
+            @Parameter(description = "자녀 ID", required = true) @PathVariable String childId) {
         try {
             Map<String, Object> profile = parentService.getChildProfile(childId);
             return ResponseEntity.ok(Map.of(
@@ -52,8 +58,10 @@ public class ParentController {
     /**
      * 자녀 경제 성향 그래프 데이터
      */
+    @Operation(summary = "자녀 성향 그래프", description = "자녀의 경제 성향 그래프 데이터를 조회합니다")
     @GetMapping("/child/{childId}/tendency-graph")
-    public ResponseEntity<?> getChildTendencyGraph(@PathVariable String childId) {
+    public ResponseEntity<?> getChildTendencyGraph(
+            @Parameter(description = "자녀 ID", required = true) @PathVariable String childId) {
         try {
             Map<String, Object> tendencyData = parentService.getChildTendencyGraph(childId);
             return ResponseEntity.ok(Map.of(
@@ -73,10 +81,11 @@ public class ParentController {
     /**
      * 자녀 활동 로그 요약 (학부모용)
      */
+    @Operation(summary = "자녀 활동 요약", description = "자녀의 활동 로그 요약을 조회합니다")
     @GetMapping("/child/{childId}/activity-summary")
     public ResponseEntity<?> getChildActivitySummary(
-            @PathVariable String childId,
-            @RequestParam(defaultValue = "7") int days) {
+            @Parameter(description = "자녀 ID", required = true) @PathVariable String childId,
+            @Parameter(description = "조회할 일 수") @RequestParam(defaultValue = "7") int days) {
         try {
             Map<String, Object> summary = parentService.getChildActivitySummary(childId, days);
             return ResponseEntity.ok(Map.of(
@@ -96,8 +105,10 @@ public class ParentController {
     /**
      * 자녀 학습 성과 분석
      */
+    @Operation(summary = "자녀 학습 성과", description = "자녀의 학습 성과를 분석하여 조회합니다")
     @GetMapping("/child/{childId}/learning-progress")
-    public ResponseEntity<?> getChildLearningProgress(@PathVariable String childId) {
+    public ResponseEntity<?> getChildLearningProgress(
+            @Parameter(description = "자녀 ID", required = true) @PathVariable String childId) {
         try {
             Map<String, Object> progress = parentService.getChildLearningProgress(childId);
             return ResponseEntity.ok(Map.of(
@@ -117,8 +128,10 @@ public class ParentController {
     /**
      * 자녀 투자 포트폴리오 분석 (학부모용)
      */
+    @Operation(summary = "자녀 투자 분석", description = "자녀의 투자 포트폴리오를 분석합니다")
     @GetMapping("/child/{childId}/investment-analysis")
-    public ResponseEntity<?> getChildInvestmentAnalysis(@PathVariable String childId) {
+    public ResponseEntity<?> getChildInvestmentAnalysis(
+            @Parameter(description = "자녀 ID", required = true) @PathVariable String childId) {
         try {
             Map<String, Object> analysis = parentService.getChildInvestmentAnalysis(childId);
             return ResponseEntity.ok(Map.of(
@@ -138,8 +151,10 @@ public class ParentController {
     /**
      * 학부모용 통합 대시보드 데이터
      */
+    @Operation(summary = "학부모 대시보드", description = "학부모용 통합 대시보드 데이터를 조회합니다")
     @GetMapping("/child/{childId}/dashboard")
-    public ResponseEntity<?> getParentDashboard(@PathVariable String childId) {
+    public ResponseEntity<?> getParentDashboard(
+            @Parameter(description = "자녀 ID", required = true) @PathVariable String childId) {
         try {
             Map<String, Object> dashboard = parentService.getParentDashboard(childId);
             return ResponseEntity.ok(Map.of(
@@ -159,8 +174,10 @@ public class ParentController {
     /**
      * 자녀 성향 변화 추이 분석
      */
+    @Operation(summary = "자녀 성향 변화 추이", description = "자녀의 성향 변화 추이를 분석합니다")
     @GetMapping("/child/{childId}/tendency-history")
-    public ResponseEntity<?> getChildTendencyHistory(@PathVariable String childId) {
+    public ResponseEntity<?> getChildTendencyHistory(
+            @Parameter(description = "자녀 ID", required = true) @PathVariable String childId) {
         try {
             List<Map<String, Object>> history = parentService.getChildTendencyHistory(childId);
             return ResponseEntity.ok(Map.of(
@@ -180,8 +197,10 @@ public class ParentController {
     /**
      * 자녀 경제 교육 추천사항
      */
+    @Operation(summary = "자녀 교육 추천", description = "자녀의 경제 교육 추천사항을 제공합니다")
     @GetMapping("/child/{childId}/recommendations")
-    public ResponseEntity<?> getChildRecommendations(@PathVariable String childId) {
+    public ResponseEntity<?> getChildRecommendations(
+            @Parameter(description = "자녀 ID", required = true) @PathVariable String childId) {
         try {
             Map<String, Object> recommendations = parentService.getChildRecommendations(childId);
             return ResponseEntity.ok(Map.of(
