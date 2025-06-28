@@ -47,7 +47,7 @@ public class OAuthController {
             
             // 프론트엔드로 리다이렉트 (로그인 성공)
             String redirectUrl = String.format(
-                "http://localhost:5175/login-success?userId=%s&userName=%s",
+                "http://www.moneykids.space/login-success?userId=%s&userName=%s",
                 user.getId(), user.getName()
             );
             
@@ -57,7 +57,7 @@ public class OAuthController {
         } catch (Exception e) {
             log.error("카카오 로그인 실패", e);
             try {
-                response.sendRedirect("http://localhost:5175/login?error=kakao_login_failed");
+                response.sendRedirect("http://www.moneykids.space/login?error=kakao_login_failed");
             } catch (IOException ex) {
                 log.error("리다이렉트 실패", ex);
             }
@@ -88,7 +88,7 @@ public class OAuthController {
             
             // 프론트엔드로 리다이렉트 (로그인 성공)
             String redirectUrl = String.format(
-                "http://localhost:5175/login-success?userId=%s&userName=%s",
+                "http://www.moneykids.space/login-success?userId=%s&userName=%s",
                 user.getId(), user.getName()
             );
             
@@ -98,7 +98,7 @@ public class OAuthController {
         } catch (Exception e) {
             log.error("구글 로그인 실패", e);
             try {
-                response.sendRedirect("http://localhost:5175/login?error=google_login_failed");
+                response.sendRedirect("http://www.moneykids.space/login?error=google_login_failed");
             } catch (IOException ex) {
                 log.error("리다이렉트 실패", ex);
             }
