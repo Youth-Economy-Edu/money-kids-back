@@ -74,7 +74,7 @@ public class ArticleController {
     }
 
     // 모든 기사 조회
-    @GetMapping("/all")
+    @GetMapping("")
     public ResponseEntity<?> getAllArticles() {
         try {
             List<Article> articles = articleService.getAllArticles();

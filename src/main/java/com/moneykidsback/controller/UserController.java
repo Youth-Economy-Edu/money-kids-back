@@ -2,6 +2,7 @@ package com.moneykidsback.controller;
 
 import com.moneykidsback.model.entity.User;
 import com.moneykidsback.service.UserService;
+import com.moneykidsback.service.TradeService;
 import com.moneykidsback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final TradeService tradeService;
 
     // 사용자 정보 조회 (포인트 포함)
     @GetMapping("/{userId}")
@@ -93,6 +95,31 @@ public class UserController {
             errorResponse.put("code", 500);
             errorResponse.put("data", null);
             errorResponse.put("msg", "포인트 업데이트 실패: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
+
+    // 사용자 포트폴리오 조회
+    @GetMapping("/{userId}/portfolio")
+    public ResponseEntity<?> getUserPortfolio(@PathVariable String userId) {
+        try {
+            User user = userService.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+            
+            // TradeService를 통해 포트폴리오 정보 가져오기
+            Map<String, Object> portfolioData = tradeService.getPortfolio(userId);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 200);
+            response.put("data", portfolioData);
+            response.put("msg", "포트폴리오 조회 성공");
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("code", 500);
+            errorResponse.put("data", null);
+            errorResponse.put("msg", "포트폴리오 조회 실패: " + e.getMessage());
             return ResponseEntity.status(500).body(errorResponse);
         }
     }

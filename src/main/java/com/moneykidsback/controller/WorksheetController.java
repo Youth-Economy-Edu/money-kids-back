@@ -62,7 +62,7 @@ public class WorksheetController {
      * - 하루 1회 포인트 지급 제한
      * - 중복 완료 방지
      */
-    @PostMapping("/user/worksheet/complete")
+    @PostMapping("/worksheet/complete")
     public ResponseEntity<Map<String, Object>> completeWorksheet(@RequestBody WorksheetCompleteRequestDto request) {
         Map<String, Object> response = new HashMap<>();
         
@@ -88,7 +88,7 @@ public class WorksheetController {
     /**
      * 📊 사용자 학습 진도 조회 API
      */
-    @GetMapping("/user/{userId}/worksheet/progress")
+    @GetMapping("/worksheet/user/{userId}/progress")
     public ResponseEntity<Map<String, Object>> getUserProgress(@PathVariable String userId) {
         Map<String, Object> response = new HashMap<>();
         
